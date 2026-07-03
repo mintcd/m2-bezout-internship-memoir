@@ -265,7 +265,7 @@ $$\Delta z_n = z_{n} - z_{n-1}.$$
   Since $u < 1$, we have $\alpha < 1$. By $z_n = \Theta(n^\alpha)$, we have $\dfrac{1}{n}(2uz_n + vz_1) \to 0$, or
   $$|\Delta z_{n+1}| \le v\sup_{1\le i \le n}|\Delta z_i| + o(1).$$
   We have $v < 1$ since otherwise the condition $2u+v > 1$ would be violated. Then $(|\Delta z_i|)$ is bounded. Let $M = \sup_{n \ge 1} |\Delta z_n|$. Let $\epsilon > 0$, then there exists $N$ such that for all $n \ge N$, $|\Delta z_n| < M + \epsilon$. Therefore,
-  $$|\Delta z_{n+2} - \Delta z_{n+1}| \le v(M+\epsilon) + o(1).$$
+  $$|\Delta z_{n+1}| \le v(M+\epsilon) + o(1).$$
   Let $n\to\infty$, we have $M \le v(M+\epsilon)$. Since $\epsilon > 0$ is arbitrary, we have $M = 0$.
 \end{proof}
 
