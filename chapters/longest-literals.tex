@@ -218,12 +218,7 @@ Next, we present the stronger big-$\Theta$ result. The proof is done by fine-gra
 \end{proof}
 
 \begin{remark}
-  In the proof of the lower bound we exploit the fact that $(n+L)^{\alpha+1}$ dominates $n(n+L+2)^{\alpha+1}$.
-
-
-  upper bound, choosing the hypothesis $z_n \le K(n-1)^\alpha$ instead of $z_n \le Kn^\alpha$ is only for algebraic convenience. Fortunately, it aligns well with the crucial point where we save the term $2u$. Otherwise, we would be left with
-  $$Kn^{\alpha+1} - \dfrac{2Ku}{\alpha+1} \le Kn(n+2)^\alpha,$$
-  wasting our constant $K$. The lower bound is actually simpler, as we can use
+  In the proof of the lower bound we exploit the fact that $(n+L)^{\alpha+1}$ dominates $n(n+L+2)^{\alpha+1}$ when $L$ is large enough. Actually, we also have $(n-L)^{\alpha+1} \ll n(n-L+2)^{\alpha+1}$ when $L$ is large enough. However, if we apply the same idea to the upper bound, we cannot start the hypothesis from the beginning, but only after some $n > L$. It is nice that we can overcome that by choosing $L=1$ and saving a fixed budget $2u$ in the first term.
 \end{remark}
 
 We proceed to the exact asymptotics $z_n \sim Cn^\alpha$. The idea is to use loose inequalities to prove easier quantitative properties, then upgrade step by step with tighter inequalities.

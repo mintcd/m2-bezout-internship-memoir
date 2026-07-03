@@ -1,0 +1,9 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Dependency graph of main functions in the compilation phase.}}{6}{figure.caption.4}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces The dependency graphs by Violet and Rose.}}{6}{figure.caption.5}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Dependency graph of main functions in the execution phase.}}{7}{figure.caption.6}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Proposed sequential dependency graph representation for \texttt {abc[0-9]+xyz}.}}{8}{figure.caption.7}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
