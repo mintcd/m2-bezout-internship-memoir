@@ -63,7 +63,11 @@ Thus, we must have
 
 Note that $\alpha>0$, since otherwise $2u+v = 1$. A natural goal is to try to escape from the maximum operator. However, $(z_n)$ fluctuates in the first iterations, and the time where it begins to increase depends on the parameters $u$ and $v$. An extreme case is that when
 $$u\to1/2+ \text{ and } v\to0+,$$
-the sequence $(z_n)$ fluctuates for a long time before increasing consistently. It turns out that this property of \textit{eventual monotonicity} is sufficient to escape from the maximum operator. Indeed, assume that there exists $N_1$ such that $z_{n+1} \ge z_n$ for all $n \ge N_1$. Since $(z_n)$ is unbounded, there exists $N_2 \ge N_1$ such that for all $n \ge N_2$, we have both $z_{n+1} \ge \max\limits_{1\le i \le N_1} z_i$ and $z_{n+1} \ge z_n$. That is
+the sequence $(z_n)$ fluctuates for a long time before increasing consistently.
+
+\textcolor{red}{add figure and discuss the case when $z_2=1$.}
+
+It turns out that this property of \textit{eventual monotonicity} is sufficient to escape from the maximum operator. Indeed, assume that there exists $N_1$ such that $z_{n+1} \ge z_n$ for all $n \ge N_1$. Since $(z_n)$ is unbounded, there exists $N_2 \ge N_1$ such that for all $n \ge N_2$, we have both $z_{n+1} \ge \max\limits_{1\le i \le N_1} z_i$ and $z_{n+1} \ge z_n$. That is
 $$\forall n \ge N_2, \quad z_{n+1} \ge \max_{1 \le i \le n} z_i.$$
 Taking $N_3 = 2N_2-1$, we have
 $$\forall n \ge N_3, \forall \dfrac{N_3+1}{2}\le i \le N_3, \quad z_{i} \ge z_{n+1-i}.$$
@@ -223,8 +227,8 @@ Next, we present the stronger big-$\Theta$ result. The proof is done by fine-gra
   In the proof of the lower bound we exploit the fact that $(n+L)^{\alpha+1}$ dominates $n(n+L+2)^{\alpha+1}$ when $L$ is large enough. Actually, we also have $(n-L)^{\alpha+1} \ll n(n-L+2)^{\alpha+1}$ when $L$ is large enough. However, if we apply the same idea to the upper bound, we cannot start the hypothesis from the beginning, but only after some $n > L$. We can overcome that by choosing $L=1$ and saving a fixed budget $2u$ in the first term. Nicely, that also leads to an algebraic convenience.
 \end{remark}
 
-We proceed to the exact asymptotics $z_n \sim Cn^\alpha$. The idea is to use loose inequalities to prove easier quantitative properties, then upgrade step by step with tighter inequalities. Let us define the difference
-$$\Delta z_n = z_{n+1} - z_n.$$
+We proceed to the exact asymptotics $z_n \sim Cn^\alpha$. The idea is to use loose inequalities to bootstrap more basic properties, then upgrade step by step with tighter inequalities. The next lemma is our first step, where we use a loose inequality $\max(a,b)\le a+b$ to show that the difference between consecutive terms vanishes. To begin with, let us define for $n\ge 1$ the difference
+$$\Delta z_n = z_{n} - z_{n-1}.$$
 
 \begin{lemma}[Vanishing difference]
   \label{lem:vanishing-difference}
@@ -259,8 +263,8 @@ $$\Delta z_n = z_{n+1} - z_n.$$
      & \le 2uz_n + vz_1 + nv\sup_{1\le i \le n}|\Delta z_i|.
   \end{align*}
   Since $u < 1$, we have $\alpha < 1$. By $z_n = \Theta(n^\alpha)$, we have $\dfrac{1}{n}(2uz_n + vz_1) \to 0$, or
-  $$|\Delta z_{n+2} - \Delta z_{n+1}| \le v\sup_{1\le i \le n}|\Delta z_i| + o(1).$$
-  We have $v < 1$ since otherwise, $2u+v > 1$ would be violated. Hence $(|\Delta z_i|)$ is bounded. Let $M = \sup_{n \ge 1} |\Delta z_n|$. Let $\epsilon > 0$, then there exists $N$ such that for all $n \ge N$, $|\Delta z_n| < M + \epsilon$. Therefore,
+  $$|\Delta z_{n+1}| \le v\sup_{1\le i \le n}|\Delta z_i| + o(1).$$
+  We have $v < 1$ since otherwise the condition $2u+v > 1$ would be violated. Then $(|\Delta z_i|)$ is bounded. Let $M = \sup_{n \ge 1} |\Delta z_n|$. Let $\epsilon > 0$, then there exists $N$ such that for all $n \ge N$, $|\Delta z_n| < M + \epsilon$. Therefore,
   $$|\Delta z_{n+2} - \Delta z_{n+1}| \le v(M+\epsilon) + o(1).$$
   Let $n\to\infty$, we have $M \le v(M+\epsilon)$. Since $\epsilon > 0$ is arbitrary, we have $M = 0$.
 \end{proof}
@@ -422,7 +426,7 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
     u_m
      & \le \left(\dfrac{2(u+v)}{n-2}+v2^{-\alpha-1}\right)\max(u_{m-1},u_m) + \dfrac{K_1}{2^{2m}}.
   \end{align*}
-  Now the reason for redefining the difference operator and shifting the indices is clear: we need the left-hand side index to be $n$ to take the maximum over the window $[2^m, 2^{m+1})$, while the right-hand side does not span over two windows. Since $v2^{-\alpha} = 2(u+v)-\alpha-1 < 1$, we can choose $m_0$ large enough such that $2^{m_0} \ge N'$, and there exists $\gamma_1$ such that
+  Now the reason for redefining the difference operator and shifting the indices is clear: we need the left-hand side index to be $n$ to take the maximum over the window $[2^m, 2^{m+1})$, while the right-hand side does not span over more two windows. Since $v2^{-\alpha} = 2(u+v)-\alpha-1 < 1$, we can choose $m_0$ large enough such that $2^{m_0} \ge N'$, and there exists $\gamma_1$ such that
   $$\dfrac{2(u+v)}{n-2}+ v2^{-\alpha-1} < \gamma_1 < \dfrac{1}{2}$$
   for all $m\ge m_0$ and $n\in [2^m, 2^{m+1})$. If $u_{m-1} > u_m$, then $u_m \le \gamma_1 u_{m-1} + \dfrac{K_1}{2^{2m}}$. If $u_{m-1} \le u_m$, then $u_m \le \dfrac{K_1}{2^{2m}(1-\gamma_1)}$. In both cases, we have
   \begin{align*}
@@ -445,16 +449,23 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
   Hence, $(x_n)$ converges to some constant $C>0$. Thus, $z_n \sim Cn^\alpha$.
 \end{proof}
 
-\section{Asymptotics}
+\section{Asymptotics of the original recurrence}
 
-With the results that the lower and upper bounds grow as big-$\Theta$ of a pure power of $n$, it is plausible to conjecture the same situation for the original sequence $(y_n)$. We adapt the contraction method (e.g, \cite{neininger2004general}). The original idea is as follows.
+With the results that the lower and upper bounds grow as big-$\Theta$ of a pure power of $n$, it is plausible to conjecture the same situation for the original sequence $(y_n)$. The stochastic recurrence \eqref{eq:longest-literal-recurrence} looks similar to the deterministic recurrence \eqref{eq:lower-bound-tighter}. However, if it is true that $y_n \sim Cn^{\alpha^\star}$, then experiments show that $\alpha^\star$ is strictly larger than the growth order of the deterministic recurrence. For $y_n$, we will prove the weakest result of the three asymptotic results, that is $y_n = n^{\alpha^\star + o(1)}$. The problems of stronger asymptotic results remain open. Another interesting question left open is follows.
+
+\begin{openquestion}
+  \label{openq:alpha-algebraic}
+  Given that $y_n = n^{\alpha^\star + o(1)}$, is there an algebraic equation for $\alpha^\star$?
+\end{openquestion}
+
+We adapt the contraction method (e.g, \cite{neininger2004general}). The original idea is as follows.
 \begin{enumerate}
   \item Guess the scaling factor, then derive a normalized recurrence.
   \item Derive a limiting fixed-point equation from the normalized recurrence.
   \item Prove that the limiting equation has a unique solution in a suitable metric space using a contraction argument.
   \item Prove that the normalized sequence converges in distribution to that unique solution.
 \end{enumerate}
-We discuss the reality that the contraction method is \textit{not} directly applicable to our case. Let $X_n = \dfrac{Y_n}{n^\alpha}$ for some $\alpha > 0$ to be determined. We have the recurrence for $X_n$
+We discuss the reality that the contraction method is not directly applicable to our case. Let $X_n = \dfrac{Y_n}{n^\alpha}$ for $\alpha > 0$. We have the recurrence for $X_n$
 
 \begin{equation}
   \label{eq:scaled-recurrence}
@@ -465,9 +476,7 @@ We discuss the reality that the contraction method is \textit{not} directly appl
   \end{aligned}
 \end{equation}
 
-The idea is to derive a limiting equation, then prove that the scaled sequence $(X_n)$ converges in distribution to a unique solution of the limiting equation. In our case, we state the limiting equation as follows.
-
-\begin{lemma}
+\begin{lemma}[Limiting equation]
   \label{lem:limiting-equation}
   Suppose that $X_n \stackrel{d}{\to} X$. Then, $X$ satisfies the following distributional equation
   \begin{equation}
@@ -477,8 +486,36 @@ The idea is to derive a limiting equation, then prove that the scaled sequence $
   where $U \sim \mathrm{Unif}[0,1]$.
 \end{lemma}
 
-The proof of Lemma \ref{lem:limiting-equation} is given in Appendix \ref{subsec:proof-limiting-equation}. Our first goal is to prove that there exists a unique solution $(X,\alpha)$ to \eqref{eq:limiting-equation}. We define the operator induced by the right-hand side of \eqref{eq:limiting-equation} by $T: \D \to \D$ such that
+The proof of Lemma \ref{lem:limiting-equation} is given in Appendix \ref{subsec:proof-limiting-equation}. Our first goal is to prove that there exists a unique solution $(X^\star,\alpha^\star)$ to \eqref{eq:limiting-equation}. Let $\D$ be the space of probability measures on $\mathbb{R}$. We define the operator $T: \D \to \D$ induced by the right-hand side of \eqref{eq:limiting-equation} as
 \begin{equation}
   T_{\alpha}(\mu) = \mathcal{L}\left(I\left(U^\alpha X^{(1)} + (1-U)^\alpha X^{(2)}\right) + J\max(U^\alpha X^{(1)}, (1-U)^\alpha X^{(2)})\right), \quad X^{(1)}, X^{(2)} \stackrel{i.i.d}{\sim}\mu.
 \end{equation}
-Observe that $\delta_0$ is always a solution to \eqref{eq:limiting-equation}, which is undesired. Hence, we have to choose a space that does not contain $\delta_0$. The operator is not a contraction in the Wasserstein metric. The Zolotarev metric \cite{zolotarev1977approximation} gives tighter bounds for proving contraction once the mean is fixed, but $T_\alpha$ does not preserve the mean.
+Observe that $\delta_0$ is always a solution to \eqref{eq:limiting-equation}, which is undesired. Hence, we have to choose a space that does not contain $\delta_0$. The operator is not a contraction in the Wasserstein metric. The Zolotarev metric \cite{zolotarev1977approximation} gives tighter bounds for proving contraction once the mean is fixed, but $T_\alpha$ does not preserve the mean. It is likely that any contraction-based approach would fail due to inequalities unable to capture the structure of the operator. It may be better to prove existence and uniqueness separately.
+
+We discuss an intuition, as follows. Let we correspond the fixed-point equation to a recurrence
+\begin{equation}
+  \mu_{n+1} = T_{\alpha}(\mu_n), \quad \mu_0 = \delta_1,
+\end{equation}
+The starting distribution can be another one rather than $\delta_1$. At each iteration, $T_\alpha$ changes the ``shape'' of the distribution $\mu_n$. Depending on how ``chaotic'' $\mu_n$ is, $T_\alpha$ will increase or decrease its mean. If $\alpha$ is too big, $T_\alpha$ pushes the mean to $0$ before the shape has a chance to be chaotic. If $\alpha$ is too small, $T_\alpha$ pushes the mean to infinity when the shape is chaotic enough. The right $\alpha^\star$ is the one that balances the two effects, making the sequence $(\mu_n)$ converge to a non-degenerate distribution. Unfortunately, the variance or second moment cannot capture that notion of chaos, as we see in the following counter example.
+
+\textcolor{red}{counterexample: two $\mu$ of the same mean and variance but $\alpha$ decreases one's mean and increases the others mean.}
+
+The next open question is then if there exists a measure of chaos that can capture whether $T_\alpha$ increases or decreases the mean, for a given $\alpha$. In particular, we consider the class of $\Phi$-entropies \cite{chafai2004entropies} that generalized both the variance and the Shannon entropy. The $\Phi$-entropy of a random variable $X$ is defined as
+\begin{equation}
+  \textbf{Ent}_{\Phi}(X) = \mathbb{E}[\Phi(X)] - \Phi(\mathbb{E}[X]),
+\end{equation}
+where $\Phi$ is a convex function. The variance is a special case of $\Phi$-entropy with $\Phi(x) = x^2$. The Shannon entropy is another special case with $\Phi(x) = x\ln x$. We leave the following question open.
+
+\begin{openquestion}
+  \label{openq:entropy}
+  Is there a convex function $\Phi$ such that there exists a monotone function $\alpha: \RR_+ \to [0,1]$ such that for every $\mu$ in some subset of $\D$ and $X\sim \mu$, we have $\alpha(\textbf{Ent}_{\Phi}(X)) = \EE[X]$?
+\end{openquestion}
+
+That means we ask if it is possible to find which $\alpha$ that keeps the mean of $\mu$, just by looking at the $\Phi$-entropy of $X\sim\mu$. A more tractable question is stated and proved as follows.
+
+\begin{lemma}
+  \label{prop:f}
+  For every $\mu\in \D_2(1)$, there exists a unique $\alpha\in(0,1]$ such that $f(\mu, \alpha) = 1$.
+\end{lemma}
+
+statement is true and provable: for each $\mu$, there exists a unique $\alpha$ such that $\EE[T_\alpha(\mu)] = \EE[\mu]$.
