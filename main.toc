@@ -14,11 +14,12 @@
 \contentsline {section}{\numberline {3.3}Asymptotics of the original recurrence}{22}{section.3.3}%
 \contentsline {subsection}{\numberline {3.3.1}Proof strategy}{22}{subsection.3.3.1}%
 \contentsline {subsection}{\numberline {3.3.2}Partial proof of uniqueness of the fixed point}{24}{subsection.3.3.2}%
-\contentsline {chapter}{\numberline {A}Appendix}{25}{appendix.A}%
-\contentsline {section}{\numberline {A.1}The Shift-Or algorithm}{25}{section.A.1}%
-\contentsline {section}{\numberline {A.2}BST-like distributions of regular expression trees}{25}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Basics of Monte-Carlo simulation}{26}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Remaining proofs}{26}{section.A.4}%
-\contentsline {subsection}{\numberline {A.4.1}Lemma \ref {lem:limiting-equation}}{26}{subsection.A.4.1}%
-\contentsline {subsection}{\numberline {A.4.2}Proposition \ref {prop:f}}{26}{subsection.A.4.2}%
-\contentsline {chapter}{\numberline {B}Bibliography}{27}{appendix.B}%
+\contentsline {chapter}{\numberline {A}Appendix}{26}{appendix.A}%
+\contentsline {section}{\numberline {A.1}The Shift-Or algorithm}{26}{section.A.1}%
+\contentsline {section}{\numberline {A.2}BST-like distributions of regular expression trees}{26}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Basics of Monte-Carlo simulation}{27}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Remaining proofs}{27}{section.A.4}%
+\contentsline {subsection}{\numberline {A.4.1}Lemma \ref {lem:limiting-equation}}{27}{subsection.A.4.1}%
+\contentsline {subsection}{\numberline {A.4.2}Proposition \ref {prop:f}}{27}{subsection.A.4.2}%
+\contentsline {subsection}{\numberline {A.4.3}Proposition \ref {prop:uniform-bounded-second-moment}}{27}{subsection.A.4.3}%
+\contentsline {chapter}{\numberline {B}Bibliography}{28}{appendix.B}%

@@ -43,3 +43,37 @@ The algorithm leverages the fact that every time the state register is shifted t
 
 \subsection{Proposition \ref{prop:f}}
 \label{subsec:proof-prop-f}
+
+\begin{proof}
+  It is clear that $f$ is strictly decreasing in $\alpha$. Next, we show that $f$ is continuous. The first term is continuous. We show that the second term is Lipschitz continuous. Let $\alpha, \alpha' \in (0,1]$ and assume without loss of generality that $\alpha > \alpha'$. We have
+  \begin{align*}
+     & \EE\left[\max\left(U^\alpha X^{(1)}, (1-U)^\alpha X^{(2)}\right) - \max\left(U^{\alpha'} X^{(1)}, (1-U)^{\alpha'} X^{(2)}\right)\right] \\
+     & \le \EE\left[\max\left(\left|U^\alpha - U^{\alpha'}\right|X^{(1)}, \left|(1-U)^\alpha - (1-U)^{\alpha'}\right|X^{(2)}\right)\right]     \\
+     & \le \EE\left[\left|U^\alpha - U^{\alpha'}\right|\right] + \EE\left[\left|(1-U)^\alpha - (1-U)^{\alpha'}\right|\right]                   \\
+     & = 2\EE\left[\left|U^\alpha - U^{\alpha'}\right|\right]
+     & \text{($U \stackrel{d}{=} 1-U$)}                                                                                                        \\
+     & = 2\EE\left[U^{\alpha'} - U^{\alpha}\right]
+     & \text{($U^\alpha\ge U^{\alpha'}, a.s.$)}                                                                                                \\
+     & = \dfrac{2}{\alpha'+1} - \dfrac{2}{\alpha+1} = \dfrac{2(\alpha-\alpha')}{(\alpha+1)(\alpha'+1)}                                         \\
+     & \le 2(\alpha-\alpha').
+  \end{align*}
+
+  Finally, we evaluate $f$ at the endpoints.
+  $$\lim_{\alpha \to 0+} f(\mu, \alpha) = 2u+v\EE\left[\max\left(X^{(1)}, X^{(2)}\right)\right] > 2u+v > 1,$$
+  $$f(1) = u + v\EE\left[\max\left(U^\alpha X^{(1)}, (1-U)^\alpha X^{(2)}\right)\right] \le u+v \le 1.$$
+\end{proof}
+
+\subsection{Proposition \ref{prop:uniform-bounded-second-moment}}
+\label{subsec:proof-prop-phi}
+
+\begin{proof}
+  Let $\mu\in\D_2(1)$ have finite second moment. Let $Z\sim \mu$. Follow the steps in the previous section, we have
+  \begin{align*}
+    \EE\left[\Phi(Z)^2\right]
+     & \le \dfrac{2(u+v)}{2\alpha+1}\EE\left[Z^2\right] + 2uB(\alpha+1, \alpha+1) \\
+     & < \dfrac{2(u+v)}{2(2u+v)-1}\EE\left[Z^2\right] + 2uB(2u+v, 2u+v)           \\
+  \end{align*}
+  Choose
+  $$M_0 = 2uB(2u+v, 2u+v)\left(1-\dfrac{2(u+v)}{2(2u+v)-1}\right) = 2uB(2u+v, 2u+v)\dfrac{2(2u+v)-1}{2u-1}.$$
+  we have $\EE\left[\Phi(Z)^2\right] \le M$. Hence, $\Phi$ maps $\D_2(1, M)$ into itself.
+\end{proof}

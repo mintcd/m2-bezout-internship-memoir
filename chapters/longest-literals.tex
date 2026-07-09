@@ -490,9 +490,10 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
         Define the recurrence according to $T_\alpha$ as
         \begin{equation}
           \label{eq:operator-T-recurrence}
-          \mu_{n+1} = T_{\alpha}(\mu_n), \quad \mu_1 = \delta_1,
+          \mu_{n+1} = T_{\alpha}(\mu_n), \quad n \ge 1,
         \end{equation}
-        The initial distribution does not need to be restricted to $\delta_1$. The contraction argument may not work. If $T_\alpha$ were a contraction in the Wasserstein metric for some $\alpha$, the sequence would collapse to $\delta_0$ from any $\mu_1$. While the Zolotarev metric allows us to choose a subspace excluding $\delta_0$, it requires certain first moments to remain fixed---a condition $T_\alpha$ violates, as it does not preserve the mean.
+        and $\mu_1$ is some initial distribution.
+        The contraction argument may not work. If $T_\alpha$ were a contraction in the Wasserstein metric for some $\alpha$, the sequence would collapse to $\delta_0$ from any $\mu_1$. While the Zolotarev metric allows us to choose a subspace excluding $\delta_0$, it requires certain first moments to remain fixed---a condition $T_\alpha$ violates, as it does not preserve the mean.
 
         An intuition behind the evolution of \eqref{eq:operator-T-recurrence} is as follows. Let $\alpha$ be fixed. At each iteration, $T_\alpha$ alters the shape of the distribution $\mu_n$. Depending on the ``dispersion'' of $\mu_n$, $T_\alpha$ will either increase or decrease its mean. If $\alpha$ is too large, $T_\alpha$ drives the mean to $0$ before the distribution becomes sufficiently dispersed. Conversely, if $\alpha$ is too small, $T_\alpha$ pushes the mean to infinity once the distribution is adequately dispersed.
         The mean is not positively correlated with the need for a larger $\alpha$. Let $\mu = \delta_2$ and $\nu = 2\text{Ber}(1/2)$, then $\EE_{X\sim\mu}[X] = 2 > 1 = \EE_{Y\sim\nu}[Y]$. Then let $\alpha$ solve \ref{eq:alpha-equation}. Then $\EE_{X\sim\mu}[T_\alpha(X)] = \EE_{X\sim\mu}[X]$ but $\EE_{Y\sim\nu}[T_\alpha(Y)] > \EE_{Y\sim\nu}[Y]$. That means although $\mu$ has a larger mean than $\nu$, it requires a smaller $\alpha$ to keep its mean fixed. This is because $\nu$ is more dispersed than $\mu$. Unfortunately, the second moment is still not sufficient. One can build a similar counterexample by choosing $\mu$ and $\nu$ of the same mean, $\mathbb{E}_{X\sim\mu}[X^2] > \mathbb{E}_{Y\sim\nu}[Y^2]$, and $\mathbb{E}_{X\sim\mu}[X^3] < \mathbb{E}_{Y\sim\nu}[Y^3]$. If if the third moments differ enough comparing to how different the second moments are, then $\EE_{X\sim\mu}[T_\alpha(X)] < \EE_{Y\sim\nu}[T_\alpha(Y)]$. Now it is clear that no finite number of moments is sufficient to determine the correct $\alpha$ that keeps the mean fixed.
@@ -502,16 +503,17 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
         \begin{proposition}
           \label{prop:f}
           Define the function $f: \D(1)\times(0,1] \to \RR_+$ as
-          $$f(\mu, \alpha) = \EE_{X\sim\mu}[T_\alpha(X)] = \dfrac{2u}{\alpha+1} + v \EE\left[\max\left(U^\alpha X^{(1)}, (1-U)^\alpha X^{(2)}\right)\right].$$
+          $$f(\mu, \alpha) = \EE_{Y\sim T_\alpha(\mu)}[X] = \dfrac{2u}{\alpha+1} + v \EE_{X^{(1)}, X^{(2)}\sim\mu}\left[\max\left(U^\alpha X^{(1)}, (1-U)^\alpha X^{(2)}\right)\right].$$
 
-          For every $\mu\in \D_2(1)$, there exists a unique $\alpha\in(0,1]$ such that $f(\mu, \alpha) = 1$.
+          For every $\mu\in \D_2(1)$, there exists a unique $\alpha\in[\alpha_0, 2(u+v)-1)$, where $\alpha_0$ solves \eqref{eq:alpha-equation}, such that $f(\mu, \alpha) = 1$. Moreover, the range is sharp:
+          $$\forall \alpha \in (0,\alpha_0), f(\mu, \alpha) > 1 \text{ and } \forall \epsilon\in (0,2u+v-1-\alpha_0), \exists \mu\in \D_2(1), f(\mu, \alpha) = 1.$$
         \end{proposition}
 
         A promising alternative approach is thus to let the distribution and its mean-preserving operator evolve together. By Proposition \ref{prop:f}, the function $\alpha: \mathcal{D}(1) \to (0,1]$ such that $\EE_{X\sim\mu}[T_{\alpha(\mu)}(X)] = 1$ is well-defined. We can then define the mean-preserving recurrence as follows.
 
 \begin{equation}
   \label{eq:mean-preserving-recurrence}
-  \mu_{n+1} = T_{\alpha_n}(\mu_n), \alpha_{n} = \alpha(\mu_{n}) \quad \mu_1 = \delta_1, \alpha_1 = \alpha(\mu_1).
+  \mu_{n+1} = T_{\alpha_n}(\mu_n), \,\,\, \alpha_{n} = \alpha(\mu_{n}) \quad\quad \mu_1 = \delta_1, \,\,\, \alpha_1 = \alpha(\mu_1).
 \end{equation}
 
 \textcolor{red}{figures for the algorithm}
@@ -527,7 +529,41 @@ In the next subsection, we present a partial result towards the first step.
 
 \subsection{Partial proof of uniqueness of the fixed point}
 
-Since the contraction argument may not be applicable to proving the uniqueness of the fixed point, we decompose the problem to proving existence and then uniqueness. We will use Tychonoff fixed-point theorem to prove the existence of a fixed point.
+Since the contraction argument may not be applicable to proving the uniqueness of the fixed point, we decompose the problem to proving existence and then uniqueness. We will use Tychonoff fixed-point theorem to prove existence.
+
+\begin{theorem}[{Tychonoff \cite[Exercise 2.5c]{zeidler1986nonlinear}}]
+  Let $\C$ be a nonempty, compact, convex subset of a locally convex space $\M$. Let $f: \C \to \C$ be a continuous mapping. Then $f$ has a fixed point.
+\end{theorem}
+
+Now we have to prepare the ingredients for the Tychonoff fixed-point theorem. The optimal choice for the subset $\C$ is to as small as possible, while containing $(\mu_n)$ in \eqref{eq:mean-preserving-recurrence} and $(\L(X_n))$ for $X_n$ defined in \eqref{eq:scaled-recurrence} for all $\alpha\in(2u+v-1, 2u+v)$. This is because it is more likely to guarantee uniqueness once existence is established. Define $\Phi: \D(1) \to \D(1)$ such that
+\begin{equation}
+  \label{eq:operator-phi}
+  \Phi(\mu) = T_{\alpha(\mu)}(\mu), \quad \forall \mu\in \D(1).
+\end{equation}
+
+In the followings, we will show that the subset $\C$ can be restricted to the set of distributions with uniformly bounded second moment.
+
+\begin{proposition}
+  \label{prop:uniform-bounded-second-moment}
+  Assume that $u>1/2$. Then for every
+  $$M \ge M_0 := 2uB(2u+v, 2u+v)\dfrac{2(2u+v)-1}{2u-1},$$
+  the operator $\Phi$ defined in \eqref{eq:operator-phi} maps $\D_2(1, M)$ into itself.
+\end{proposition}
+
+
+The proof is given in Appendix \ref{subsec:proof-prop-phi}. Again, the condition $u>1/2$ is crucial. If we follow \eqref{eq:operator-T-recurrence}, then it is possible to choose $M = \max(1, M_0)$. In $D_2(1,M)$, the range in Proposition \ref{prop:f} can be slightly improved to $\left[\alpha_0, 2(u+v)-1-\dfrac{v}{2M}\right)$.
+
+The next ingredient is the host vector space $\M$. To reduce excessive elaboration, it is better to follow the probabilists' preference. That is to define the notion of convergence using the space $C_b(\RR)$ of bounded, continuous test functions \cite[Chap. 1]{billingsley1999convergence}. On the other hand, to have local convexity of $\M$ right away, we follow the functional analysts' practice. That is to equip $C_b(\RR)$ with a topology and define $\M$ as its dual space, which is the space of continuous linear functionals. Finally, it is enough to have $\D_2(1, M)$ compact in $\M$. However, just as we wanted $\D_2(1, M)$ to be just enough to contain our distributions of interest, we also want $\M$ to be just enough to contain $\D_2(1, M)$, as $\M$ would be more well-behaved.
+
+\textcolor{red}{We could construct $(\mu^\star, \alpha^\star)$. Are we cheating by using the axiom of choice somewhere?}
+
+\textcolor{red}{Is $\D_2(1)$ compact in $\M$?}
+
+
+
+% \begin{remark}
+%   If we relax the condition that the second moment is uniformly bounded.
+% \end{remark}
 
 
 
