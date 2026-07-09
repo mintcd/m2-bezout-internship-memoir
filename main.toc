@@ -1,21 +1,24 @@
-\contentsline {chapter}{List of Figures}{4}{chapter*.4}%
-\contentsline {chapter}{\numberline {1}Introduction}{5}{chapter.1}%
-\contentsline {chapter}{\numberline {2}An Overview of the Hyperscan Engine}{6}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Compilation}{6}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Execution}{8}{section.2.2}%
-\contentsline {section}{\numberline {2.3}The FDR Matcher}{8}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Related Problems}{9}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}Optimizing regular expression decomposition}{9}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Analysis of the FDR string matcher}{10}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Statistics of regular expressions}{10}{subsection.2.4.3}%
-\contentsline {chapter}{\numberline {3}The Length of Longest Literals}{11}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Lower and upper bounds}{11}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Asymptotics of the lower bound recurrence}{12}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Asymptotics of the original recurrence}{21}{section.3.3}%
-\contentsline {chapter}{\numberline {A}Appendix}{24}{appendix.A}%
-\contentsline {section}{\numberline {A.1}The Shift-Or algorithm}{24}{section.A.1}%
-\contentsline {section}{\numberline {A.2}BST-like distributions of regular expression trees}{24}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Basics of Monte-Carlo simulation}{25}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Remaining proofs}{25}{section.A.4}%
-\contentsline {subsection}{\numberline {A.4.1}Lemma \ref {lem:limiting-equation}}{25}{subsection.A.4.1}%
-\contentsline {chapter}{\numberline {B}Bibliography}{26}{appendix.B}%
+\contentsline {chapter}{List of Figures}{5}{chapter*.4}%
+\contentsline {chapter}{\numberline {1}Introduction}{6}{chapter.1}%
+\contentsline {chapter}{\numberline {2}An Overview of the Hyperscan Engine}{7}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Compilation}{7}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Execution}{9}{section.2.2}%
+\contentsline {section}{\numberline {2.3}The FDR Matcher}{9}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Related Problems}{10}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Optimizing regular expression decomposition}{10}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Analysis of the FDR string matcher}{11}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Statistics of regular expressions}{11}{subsection.2.4.3}%
+\contentsline {chapter}{\numberline {3}The Length of Longest Literals}{12}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Lower and upper bounds}{12}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Asymptotics of the lower bound recurrence}{13}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Asymptotics of the original recurrence}{22}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Proof strategy}{22}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Partial proof of uniqueness of the fixed point}{24}{subsection.3.3.2}%
+\contentsline {chapter}{\numberline {A}Appendix}{25}{appendix.A}%
+\contentsline {section}{\numberline {A.1}The Shift-Or algorithm}{25}{section.A.1}%
+\contentsline {section}{\numberline {A.2}BST-like distributions of regular expression trees}{25}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Basics of Monte-Carlo simulation}{26}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Remaining proofs}{26}{section.A.4}%
+\contentsline {subsection}{\numberline {A.4.1}Lemma \ref {lem:limiting-equation}}{26}{subsection.A.4.1}%
+\contentsline {subsection}{\numberline {A.4.2}Proposition \ref {prop:f}}{26}{subsection.A.4.2}%
+\contentsline {chapter}{\numberline {B}Bibliography}{27}{appendix.B}%
