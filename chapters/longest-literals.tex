@@ -1,4 +1,7 @@
 \chapter{The Length of Longest Literals}
+
+\pablo{Little introduction here, even if a bit repetitive. Also to introduce the symbols $u,v,$ etc}
+
 \section{Lower and upper bounds}
 
 Denote $y_n := \EE[Y_n]$ for $n \ge 1$. Taking the expectation of both sides in the recurrence \eqref{eq:longest-literal-recurrence}, we have for $n \ge 1$,
@@ -20,7 +23,7 @@ Similarly, the inequality $\max(a,b) \ge \frac{1}{2}(a+b)$ gives a lower bound s
   \label{eq:lower-bound}
   z_{n+2} = \dfrac{2u+v}{n}\sum\limits_{i=1}^n z_{i}, \quad n \ge 1, \quad z_1 = 1, z_2 = 0.
 \end{equation}
-It is possible to employ a transfer theorem in analytic combinatorics to analyze the asymptotic behavior of these recurrences (Lemma \ref{lem:full-history-sum-asymptotics}). The lower bound can be improved by tightening the lower bound of the expectation of the maximum
+It is possible to employ a transfer theorem from Analytic Combinatorics to analyze the asymptotic behavior of these recurrences (Lemma \ref{lem:full-history-sum-asymptotics}). The lower bound can be improved by tightening the lower bound of the expectation of the maximum
 $$\EE\left[\max\left(Y_{i}^{(1)}, Y_{n+1-i}^{(2)}\right)\right] \ge \max\left(\EE\left[Y_{i}^{(1)}\right], \EE\left[Y_{n+1-i}^{(2)}\right]\right) = \max\left(y_i, y_{n+1-i}\right).$$
 Note that this bound is not sharp, the equality holds only when $Y_{i}^{(1)} = Y_{n+1-i}^{(2)}$ a.s. The lower bound recurrence is then given by
 \begin{equation}
@@ -65,9 +68,11 @@ the sequence $(z_n)$ fluctuates for a long time before increasing consistently.
 
 \textcolor{red}{add figure and discuss the case when $z_2=1$.}
 
+\pablo{Give experimental examples.}
+
 It turns out that this property of \textit{eventual monotonicity} is sufficient to escape from the maximum operator. Indeed, assume that there exists $N_1$ such that $z_{n+1} \ge z_n$ for all $n \ge N_1$. Since $(z_n)$ is unbounded, there exists $N_2 \ge N_1$ such that for all $n \ge N_2$, we have both $z_{n+1} \ge \max\limits_{1\le i \le N_1} z_i$ and $z_{n+1} \ge z_n$. That is
 $$\forall n \ge N_2, \quad z_{n+1} \ge \max_{1 \le i \le n} z_i.$$
-Taking $N_3 = 2N_2-1$, we have
+Taking $N_3 = 2N_2-1$, we have \cyril{the writing $\forall \dfrac{N_3+1}{2}\le i \le N_3$ looks weird}
 $$\forall n \ge N_3, \forall \dfrac{N_3+1}{2}\le i \le N_3, \quad z_{i} \ge z_{n+1-i}.$$
 
 The question about when it stops fluctuating is itself interesting, which we leave open.
@@ -76,9 +81,12 @@ The question about when it stops fluctuating is itself interesting, which we lea
   In terms of $u$ and $v$, what is the first index $N$ such that $(z_n)_{n\ge N}$ is increasing?
 \end{openquestion}
 
+\pablo{The existence of $N$  is Theorem~\ref{thm:eventually-increasing}, right ? You can announce the results, otherwise one might think that the existence of $N$ is conjectured.}
+
+
 We start with weaker results that do not require escaping from the maximum operator. Define
 \begin{equation}
-  F(x,y) = u(x+y) + v\max(x,y), x,y\in[0,1].
+  F(x,y) = u(x+y) + v\max(x,y), \forall x,y\in[0,1].
 \end{equation}
 We rewrite our recurrence as
 \begin{equation}
@@ -204,7 +212,9 @@ Next, we present the stronger big-$\Theta$ result. The proof is done by fine-gra
   Since $1-v2^{-\alpha} > 0$, choose $L>\dfrac{2\alpha}{1-v2^{-\alpha}}$, then there exists $N$ such that for all $n \ge N$,
   $$A_n - 2u(2+L)^\alpha - n(n+L+2)^\alpha \ge 0,$$
   implying that $z_{n+2} \ge K(n+L+2)^\alpha$. Finally, we choose
-  $K = \min\limits_{i\in\{1,3,\ldots, N+1\}}\dfrac{z_i}{(i+L)^\alpha} > 0$ to satisfy the base cases.
+  $K = \min\limits_{i\in\{1,3,\ldots, N+1\}}\dfrac{z_i}{(i+L)^\alpha} > 0$ to satisfy the base cases. \pablo{the base cases $i\leq N+1$ where $N$ is chosen to satisfy the above inequality.}
+
+  \pablo{$K$ below is not the same as above. Write e.g., $\tilde{K}$}
 
   Now we prove the upper bound. Our induction hypothesis is $z_n \le K (n-1)^\alpha$ for $n\ge 2$, for some constant $K > 1$. The base case $z_2=0$ is trivially satisfied. For $n\ge 2$, we have
   \begin{align*}
@@ -216,6 +226,8 @@ Next, we present the stronger big-$\Theta$ result. The proof is done by fine-gra
      & = Kn^{\alpha+1}\dfrac{2u+2v - v2^{-\alpha}}{\alpha+1}- \dfrac{2Ku}{\alpha+1}+2u                                   \\
      & = Kn^{\alpha+1} - \dfrac{2Ku}{\alpha+1} + 2u.
   \end{align*}
+
+  
   The first inequality is valid by noticing that
   $$\max(z_1, z_n) = \max(1, z_n) \le \max(1, K(n-1)^\alpha) = \max(0, K(n-1)^\alpha).$$
   The second inequality uses Lemma \ref{lem:integral-bounds}. Choose $K=\alpha+1 > 1$, then $z_{n+2} \le Kn^\alpha \le K(n+2)^\alpha$.
@@ -291,10 +303,16 @@ Since $(z_n)$ is unbounded, we have the following corollary.
   For every $a \ge 0$, the function $x\mapsto \max(a,x)$ is increasing and $1$-Lipschitz. Hence for each $n,i$ there is some $\theta_{n,i}\in[0,1]$ satisfying \eqref{eq:difference-identity}.
 \end{proof}
 
-At this step, we have isolated the difference sequence $(\Delta z_n)$ from the original sequence $(z_n)$. Our next goal is to prove that $(\Delta z_n)$ is \textit{eventually positive}. That would be done if in \eqref{eq:difference-identity}, we can absorb a lower bound of $-\Delta z_n + v\sum_{i=1}^{n-1}\theta_{n,i}\Delta z_i$ into $(2u+v-1)z_n$. We already have $|\Delta z_n| = o(z_n)$ since $(\Delta z_n)$ is bounded. Because we do not know much about $\theta_{n,i}$, we can only apply the worst case to them. A basic inequality for absolute value leads to showing that $\sum_{i=1}^{n}|\Delta z_i| = o(z_n)$. Unfortunately, if it is true that $z_n\sim Cn^\alpha$ and $z_n$ is eventually increasing, then $\sum_{i=1}^{n}|\Delta z_i| \sim Cn^\alpha$. Therefore, we need a tighter lower bound. We will use the \textit{negative variation} of $\Delta z_n$. For every $x\in\mathbb{R}$, we have
+At this step, we have isolated the difference sequence $(\Delta z_n)$ from the original sequence $(z_n)$. Our next goal is to prove that $(\Delta z_n)$ is \textit{eventually positive}. That would be done if in \eqref{eq:difference-identity}, we can absorb a lower bound of $-\Delta z_n + v\sum_{i=1}^{n-1}\theta_{n,i}\Delta z_i$ into $(2u+v-1)z_n$. We already have $|\Delta z_n| = o(z_n)$ since $(\Delta z_n)$ is bounded. Because we do not know much about $\theta_{n,i}$, we can only apply the worst case to them. A basic inequality for absolute value leads to showing that $\sum_{i=1}^{n}|\Delta z_i| = o(z_n)$. Unfortunately, if it is true that $z_n\sim Cn^\alpha$ and $z_n$ is eventually increasing, then $\sum_{i=1}^{n}|\Delta z_i| \sim Cn^\alpha$. Therefore, we need a tighter lower bound. We will use the \textit{negative variation} of $\Delta z_n$. The negative variation is defined for every $x\in\mathbb{R}$ as
 \begin{equation}
-  x_{-} := \max(-x,0) = \dfrac{1}{2}(|x| - x) \ge -x \iff x \ge -x_{-}.
+  x_{-} = \max(-x,0).
 \end{equation}
+
+We will use the inequality
+\begin{equation}
+     -x \le x_{-}.
+\end{equation}
+
 Define the negative variation series $(\Delta z_n)$ as
 \begin{equation}
   \label{eq:negative-variation}
@@ -310,10 +328,12 @@ Then $(V_n)$ is increasing. We state the criterion for eventual increase of $(z_
   By Lemma~\ref{lem:difference-identity}, for all sufficiently large $n$,
   $$n\Delta z_{n+1} \ge (2u+v-1)z_n-|\Delta z_n|-vV_n.$$
   Since $\Delta z_n$ is bounded and $z_n\to\infty$, we have $|\Delta z_n|=o(z_n)$. By assumption, $V_n = o(z_n)$. Hence for all sufficiently large $n$,
-  $$n\Delta z_{n+1} \ge \dfrac{1}{2}(2u+v-1)z_n > 0.$$
+  $$n\Delta z_{n+1} \ge \dfrac{1}{2}(2u+v-1)z_n > 0. \hfill \qedhere$$
 \end{proof}
 
-It would be perfect if we could prove that $(V_n)$ is bounded, as this is indeed the truth. However, it is already good to prove that $V_n = o(n^\alpha)$, since we already have $z_n = \Theta(n^\alpha)$.
+% It would be perfect if we could prove that $(V_n)$ is bounded, as this is indeed the truth. However, it is already good to prove that $V_n = o(n^\alpha)$, since we already have $z_n = \Theta(n^\alpha)$.
+
+\pablo{``probably'' or ``likely' ' rather than ``indeed''}
 
 \begin{lemma}
   We have $V_n = O(n^v)$.
@@ -322,10 +342,12 @@ It would be perfect if we could prove that $(V_n)$ is bounded, as this is indeed
 \begin{proof}
   Again, we start from \eqref{eq:difference-identity}. There exists $N$ such that for all $n\ge N$,
   $$n\Delta z_{n+1} = (2u+v-1)z_n - \Delta z_n + v\sum_{i=1}^{n-1}\theta_{n,j}\Delta z_i.$$
-  Let $M = \sup |\Delta_n|$. If $\Delta_{n+1}<0$, then
+  Let $M = \sup |\Delta z_n|$. If $\Delta_{n+1}<0$, then \pablo{You mean $\Delta z_n$. Also, I am not convinced of the next equality. You do have the inequality with $v \sum (\Delta z_j)_-$, but not an equality as it is not true that $(x+y)_-=x_-+y_-$}
   \begin{align*}
     n(\Delta z_{n+1})_-
-     & = -n\Delta z_{n+1} = |\Delta z_n| - (2u+v-1)z_n - v\sum_{j=1}^{n-1}(\Delta z_j)_- \\
+     & = -n\Delta z_{n+1} \\
+     & = \Delta z_n - (2u+v-1)z_n - v\sum_{j=1}^{n-1}\theta_{n,j}\Delta z_j \\
+     & \le |\Delta z_n| - (2u+v-1)z_n - v\sum_{j=1}^{n-1}\theta_{n,j}\Delta z_j- \\
      & \le  vV_{n-1} + |\Delta z_n| - (2u+v-1)z_n                                        \\
      & \le vV_{n-1} + M.
   \end{align*}
@@ -384,6 +406,8 @@ If we impose conditions \ref{eq:parameter-conditions-stronger}, then the above i
 
 With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact asymptotics of $(z_n)$. We will use a \textit{dyadic argument} to show that the normalized difference sequence $(\Delta x_n)$ is absolutely summable by dividing analyzing it in the intervals $[2^m, 2^{m+1})$.
 
+
+\pablo{You can pre-state this result at the beginning of the chapter to outline it, citing it forward.}
         \begin{theorem}
           \label{thm:exact-asymptotics}
           Let $(z_n)$ be the defined by \eqref{eq:delayed-recurrence} and $\alpha$ be the solution to \eqref{eq:alpha-equation}. Then $z_n\sim C n^\alpha$ for some constant $C > 0$.

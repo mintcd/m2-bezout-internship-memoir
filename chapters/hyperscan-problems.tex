@@ -4,6 +4,10 @@ The regular expression matching engine Hyperscan \cite{wang2019hyperscan} was pr
 
 Hyperscan is designed to match a set of regular expressions against a stream of data, with its primary use case being deep packet inspection. The engine leverages SIMD (Single Instruction, Multiple Data) features supported by modern CPUs, which uses longer registers to process multiple similar operations in one instruction. Architecturally, it operates in two distinct phases: the compilation phase and the execution phase. It supports two modes of operation: block mode and stream mode. In block mode, the engine processes a single block of data at a time, while in stream mode, it maintains state across multiple blocks, allowing for continuous matching over a data stream. We focus on the block mode.
 
+\cyril{You have to introduce regular expressions, automata, SIMD instructions, \ldots Maybe in a separate short chapter with some definitions. You can be brief but someone like Laurent Hauswirth does not know what a regular expression is.}
+
+\pablo{Agreed, maybe actually expand on your chapter 1 with different subsections. Also comment on the Glushkov NFA.}
+
 
 % Our analysis for the compile phase focuses on its decomposition-based optimization. In the execution phase, we examine its multi-string matchers.
 
@@ -135,6 +139,7 @@ In \texttt{doInitialVioletTransform}, the graph analyses described in the Hypers
   \label{fig:graph_comparison}
 \end{figure}
 
+\pablo{Expand on the example. Is there a difference between Edge and Vertex Property from a theoretical point of view?}
 Consider an example of a regular expression \texttt{abc[0-9]+xyz}. If we discard heuristics for short literals, then the graphs returned by Violet and Rose are as in Figures \ref{fig:rose_in_graph} and \ref{fig:rose_graph}, respectively. They both mean that if there is a match of \texttt{abc} that \textit{ends} at position $i$ (excluded) and a match of \texttt{xyz} that \textit{starts} at position $j$ (included), such that $j-i>0$, then the subtext at $[i, j)$ must match the sub-FA \texttt{[0-9]+}. Further optimization imposes that
 $$m \le j-i \le M,$$
 where $m$ and $M$ are the minimum and maximum \textit{widths} of the sub-FA, i.e., the minimum and maximum lengths of possible strings that match the sub-FA.
@@ -185,7 +190,7 @@ An overview of the execution phase is illustrated in Figure \ref{fig:hs_scan_gra
 There are at least four SIMD-based string matchers in Hyperscan: Noodle is used when there is a single literal, Teddy \cite{qiu2021teddy} or Harry \cite{xu2023harry} when there are 2 to 300, and FDR when there are more than 300. The last three matchers are all prefilter-based. Firstly, they group the literals into a set of \textit{buckets}. Each bucket can be regarded as an indeterminate string (see e.g., \cite{holub2008fast})
 
 \begin{definition}
-  Let $\Sigma$ be an alphabet. An indeterminate string $P$ of length $n$ over $\Sigma$ is a sequence of $n$ non-empty sets of characters from $\Sigma$, i.e.,
+  Let $\Sigma$ be an alphabet. An indeterminate string $\bm{P}$ of length $n$ over $\Sigma$ is a sequence of $n$ non-empty sets of characters from $\Sigma$, i.e.,
   $$\bm{P} = \bm{p}_1  \bm{p}_2  \ldots \bm{p}_{n},$$
   where $\emptyset \neq p_i \subseteq \Sigma$ for all $i \in [1, n]$. The subset $\Sigma$ is usually referred to as the \textit{don't care} character. A string $T$ over $\Sigma$ matches the indeterminate string $\bm{P}$ if and only if $|T| = n$ and $T[i] \in \bm{p}_i$ for all $i \in [1, n]$.
 \end{definition}
@@ -200,7 +205,7 @@ $$
 
 Let $T$ be a text. The string matchers attempt to check if $T$ matches $\bm{P}$, and if so, which literal $P_i$ is matched. The FDR matcher is an SIMD extension of the Shift-Or algorithm (Appendix \ref{sec:shift-or}).
 
-
+\pablo{Before the related problems, it would be better (I think) to introduce the Shift-Or algorithm here. You also had experiments, right ? You can mention what you did related to this.}
 
 \section{Related Problems}
 
@@ -245,15 +250,17 @@ Consider another example of \texttt{abc[0-9]+xyz(de)*}. In its dependency graph 
     \path[->, thick] (digits) edge node[above, edge_label] {} (de);
 
   \end{tikzpicture}
-  \caption{Proposed sequential dependency graph representation for \texttt{abc[0-9]+xyz}.}
+  \caption{Proposed sequential dependency graph representation for \texttt{abc[0-9]+xyz}. \cyril{I'm a bit confuse by the edge $abc\rightarrow xyz$}}
   \label{fig:new_representation}
 \end{figure}
 
 \subsection{Analysis of the FDR string matcher}
 
+\cyril{Define the BST-like distribution here instead of in the appendices, and introduce $u$ and $v$, with possibly some discussion on the ``real life'' values.}
+
 \subsection{Statistics of regular expressions}
 
-Suppose that the regex trees are generated according to a BST-like distribution. The average length of the longest literals of an $n$-node tree satisfies the recurrence
+Suppose that the regex trees are generated according to a BST-like distribution. The average length of the longest literals of an $n$-node tree satisfies the recurrence \cyril{explain why this equation holds, at least informally}
 \begin{equation}
   \label{eq:longest-literal-recurrence}
   Y_{n+2} \stackrel{d}{=} I\left(Y_{U_n}^{(1)} + Y_{n+1-U_n}^{(2)}\right) + J\max\left(Y_{U_n}^{(1)}, Y_{n+1-U_n}^{(2)}\right), n\ge 1, \quad Y_1=1, Y_2=0.
