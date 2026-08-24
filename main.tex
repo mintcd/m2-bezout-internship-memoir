@@ -45,20 +45,16 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 
-% 1. Create the boolean switch
 \newif\ifshowcomments
 
-% 2. Toggle this between \showcommentstrue (draft) and \showcommentsfalse (final)
+% Toggle this between \showcommentstrue (draft) and \showcommentsfalse (final)
 \showcommentsfalse
 
-% 3. Define the commands conditionally
 \ifshowcomments
-    % Draft mode definitions
     \newcommand{\cyril}[1]{\textcolor{blue}{\bf Cyril: #1}}
     \newcommand{\pablo}[1]{\textcolor{magenta}{\bf Pablo: #1}}
     \newcommand{\minh}[1]{\textcolor{green}{\bf Minh: #1}}
 \else
-    % Final mode definitions (consumes the argument and outputs nothing)
     \newcommand{\cyril}[1]{}
     \newcommand{\pablo}[1]{}
     \newcommand{\minh}[1]{}

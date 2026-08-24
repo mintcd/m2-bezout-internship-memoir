@@ -31,13 +31,13 @@
   \end{align*}
   For the right-hand side, we have
   $$K \sum_{n=1}^\infty \sum_{n=1}^\infty z_n x^n = K \frac{Z(x)}{1-x}.$$
-  Equating the two sides and rearrange, we obtain a first-order linear differential equation
+  Equating the two sides and rearranging, we obtain a first-order linear differential equation
   $$Z'(x) - \left( \frac{2}{x} + \frac{Kx}{1-x} \right) Z(x) = -z_1.$$
   Multiplying both sides by the integrating factor $I(x) = x^{-2} (1-x)^K e^{Kx}$ gives
   $$[I(x) Z(x)]' = -z_1 x^{-2} (1-x)^K e^{Kx} = -z_1 x^{-2} - z_1 \frac{(1-x)^K e^{Kx} - 1}{x^2}.$$
   To integrate this from $0$ to $x$ without introducing an arbitrary integration constant, we group the singular $x^{-2}$ terms. The local expansion of $Z(x)$ at $x=0$ is $z_1 x + z_2 x^2 + \mathcal{O}(x^3)$, and the Taylor series of $(1-x)^K e^{Kx}$ begins with $1 - \frac{K}{2}x^2 + \mathcal{O}(x^3)$. Thus, we have the limit
   $$\lim_{x\to 0} \left( I(x)Z(x) - \frac{z_1}{x} \right) = \lim_{x\to 0} \left( x^{-2} (1-x)^K e^{Kx} Z(x) - \frac{z_1}{x} \right) = z_2.$$
-  Furthermore, $\lim_{x\to 0} \frac{(1-x)^K e^{Kx} - 1}{x^2} = -\frac{K}{2}$, confirming the right-hand integrand is continuous. Moving $-z_1 x^{-2}$ to the left side and integrating from $0$ to $x$ via the Fundamental Theorem of Calculus yields
+  Furthermore, $\lim_{x\to 0} \frac{(1-x)^K e^{Kx} - 1}{x^2} = -\frac{K}{2}$, confirming that the right-hand integrand is continuous. Moving $-z_1 x^{-2}$ to the left side and integrating from $0$ to $x$ via the Fundamental Theorem of Calculus yields
   $$I(x) Z(x) - \frac{z_1}{x} - z_2 = -z_1 \int_0^x \frac{(1-t)^K e^{Kt} - 1}{t^2} \, \mathrm{d}t.$$
   Multiplying by $I(x)^{-1}$ isolates the closed-form generating function
   $$Z(x) = (1-x)^{-K} e^{-Kx} \left( z_2 x^2 + z_1 x - z_1 x^2 \int_0^x \frac{(1-t)^K e^{Kt} - 1}{t^2} \, \mathrm{d}t \right).$$
@@ -45,7 +45,9 @@
   $$Z(x) \underset{x \to 1}{\sim} A e^{-K} (1-x)^{-K},$$
   where the leading constant is
   $$A = z_2 + z_1 \left( 1 - \int_0^1 \frac{(1-t)^K e^{Kt} - 1}{t^2} \, \mathrm{d}t \right).$$
-  We must ensure singularity cancellation does not occur. For any $t \in (0, 1)$, the inequality $\ln(1-t) < -t$ implies $K\ln(1-t) + Kt < 0$. Exponentiating yields $(1-t)^K e^{Kt} < 1$, which means the integrand is strictly negative. Consequently, the integral evaluates to a strictly negative value, making $1 - \int_0^1 \frac{(1-t)^K e^{Kt} - 1}{t^2} \, \mathrm{d}t > 1$. Because $z_1, z_2 \ge 0$ and are not both zero, it strictly follows that $A \ge z_2 + z_1 > 0$. Since $K > 0$, we apply the Theorem \ref{thm:sim-transfer}. Mapping the $(1-x)^{-K}$ singularity to the coefficients $z_n = [x^n]Z(x)$ yields$$z_n \sim \frac{A e^{-K}}{\Gamma(K)} n^{K-1}.$$Defining $C = \frac{A e^{-K}}{\Gamma(K)}$, we have $C > 0$, completing the proof.
+  We must ensure singularity cancellation does not occur. For any $t \in (0, 1)$, the inequality $\ln(1-t) < -t$ implies $K\ln(1-t) + Kt < 0$. Exponentiating yields $(1-t)^K e^{Kt} < 1$, so the integrand is strictly negative. Consequently, the integral evaluates to a strictly negative value, making $1 - \int_0^1 \frac{(1-t)^K e^{Kt} - 1}{t^2} \, \mathrm{d}t > 1$. Because $z_1, z_2 \ge 0$ and are not both zero, it follows that $A \ge z_2 + z_1 > 0$. Since $K > 0$, we apply Theorem \ref{thm:sim-transfer}. Mapping the $(1-x)^{-K}$ singularity to the coefficients $z_n = [x^n]Z(x)$ yields
+  $$z_n \sim \frac{A e^{-K}}{\Gamma(K)} n^{K-1}.$$
+  Defining $C = \frac{A e^{-K}}{\Gamma(K)}$, we have $C > 0$, completing the proof.
 \end{proof}
 
 \subsection{Spaces of probability measures}
@@ -57,6 +59,11 @@
 
   A sequence of random variables $(Z_n)$ is tight if for every $\varepsilon > 0$, there exists $M > 0$ such that $\sup_n\PP(|Z_n| > M) < \varepsilon$.
 \end{definition}
+
+\begin{theorem}[Prokhorov's theorem]
+  \label{thm:prokhorov}
+  A sequence of probability measures $(\mu_n)$ on $\RR$ is tight if and only if it is relatively compact in the weak topology (i.e., its closure is compact).
+\end{theorem}
 
 \section{Remaining proofs}
 
@@ -123,7 +130,7 @@ We need the following lemma.
     \dfrac{1}{m}\sum_{k=n-m+1}^{n} \left|F_{k}(x_2)-F(x_2)\right|.
   \end{align*}
 
-  If $u=1$, its convergence is similar to the second term. If $u<1$, then $n-m+1 \to \infty$. By pointwise convergence,$\forall \epsilon>0, \exists N, \forall n\ge N: |F_n(x_2)-F(x_2)|<\epsilon$. Hence, for $n-m+1\ge N$,
+  If $u=1$, its convergence is similar to the second term. If $u<1$, then $n-m+1 \to \infty$. By pointwise convergence, $\forall \epsilon>0, \exists N, \forall n\ge N: |F_n(x_2)-F(x_2)|<\epsilon$. Hence, for $n-m+1\ge N$,
   \begin{align*}
     \dfrac{1}{m}\sum_{k=n-m+1}^{n} \left|F_{k}(x_2)-F(x_2)\right| < \epsilon.
   \end{align*}
@@ -145,7 +152,7 @@ We need the following lemma.
 \label{subsec:proof-prop-f}
 
 \begin{proof}
-  It is clear that $f$ is strictly decreasing in $\alpha$. Next, we show that $f$ is continuous. The first term is continuous. We show that the second term is Lipschitz continuous. Let $\alpha, \alpha' \in (0,1]$ and assume without loss of generality that $\alpha > \alpha'$. We have
+  The function $f$ is strictly decreasing in $\alpha$. Next, we show that $f$ is continuous. The first term is continuous. We show that the second term is Lipschitz continuous. Let $\alpha, \alpha' \in (0,1]$ and assume without loss of generality that $\alpha > \alpha'$. We have
   \begin{align*}
      & \EE\left[\max\left(U^\alpha X^{(1)}, (1-U)^\alpha X^{(2)}\right) - \max\left(U^{\alpha'} X^{(1)}, (1-U)^{\alpha'} X^{(2)}\right)\right] \\
      & \le \EE\left[\max\left(\left|U^\alpha - U^{\alpha'}\right|X^{(1)}, \left|(1-U)^\alpha - (1-U)^{\alpha'}\right|X^{(2)}\right)\right]     \\
@@ -167,22 +174,22 @@ We need the following lemma.
 \label{subsec:proof-prop-phi}
 
 \begin{proof}
-  Let $\mu\in\D_2(1)$ have finite second moment. Let $Z\sim \mu$. Follow the steps in the previous section, we have
+  Let $\mu\in\D_2(1)$ have finite second moment, and let $Z\sim \mu$. Following the steps in the previous section, we have
   \begin{align*}
     \EE\left[\Phi(Z)^2\right]
      & \le \dfrac{2(u+v)}{2\alpha+1}\EE\left[Z^2\right] + 2uB(\alpha+1, \alpha+1) \\
      & < \dfrac{2(u+v)}{2(2u+v)-1}\EE\left[Z^2\right] + 2uB(2u+v, 2u+v)           \\
   \end{align*}
   Choose
-  $$M_0 = 2uB(2u+v, 2u+v)\left(1-\dfrac{2(u+v)}{2(2u+v)-1}\right) = 2uB(2u+v, 2u+v)\dfrac{2(2u+v)-1}{2u-1}.$$
-  we have $\EE\left[\Phi(Z)^2\right] \le M$. Hence, $\Phi$ maps $\D_2(1, M)$ into itself.
+  $$M_0 = 2uB(2u+v, 2u+v)\dfrac{2(2u+v)-1}{2u-1}.$$
+  We have $\EE\left[\Phi(Z)^2\right] \le M$. Hence, $\Phi$ maps $\D_2(1, M)$ into itself.
 \end{proof}
 
 \subsection{Proposition \ref{prop:nonempty-compact-convex}}
 \label{subsec:proof-prop-locally-convex-space}
 
 \begin{proof}
-  Using $M_0$ from Proposition \ref{prop:uniform-bounded-second-moment} and choose $M=\max(M_0, 1)$, then the set $\D_2(1, M)$ is nonempty since it contains $\delta_1$.
+  The set $\D_2(1, M)$ is nonempty since it contains $\delta_1$.
 
   For convexity, let $\mu, \nu \in \D_2(1, M)$. Then for every $\lambda \in [0,1]$, we have
   \begin{align*}
@@ -192,7 +199,7 @@ We need the following lemma.
      & = \lambda \int_0^\infty x^2 d\mu + (1-\lambda) \int_0^\infty x^2 d\nu \le M.
   \end{align*}
 
-  For compactness, we need to show that $\D_2(1, M)$ is tight (Definition \ref{def:tight}) and closed. For tightness, we use Chebyshev's inequality. For any $\mu \in \D_2(1, M)$ and any $R > 0$
+  For compactness, we use Prokhorov's theorem to reduce to proving that $\D_2(1, M)$ is tight and closed. Tightness is guaranteed by Chebyshev's inequality: for any $\mu \in \D_2(1, M)$ and any $R > 0$
 
   \begin{equation}
     \mu(\{x \ge R\}) \le \dfrac{1}{R^2}\int_{0}^\infty x^2 \,\mathrm{d}\mu \le \dfrac{M}{R^2}.
@@ -252,7 +259,7 @@ We need the following lemma.
   \end{align*}
   By Lemma~\ref{lem:collapse-one-step}, we have
   $$d_1(T_{\alpha_2}(\mu), T_{\alpha_2}(\nu)) \le \dfrac{2(u+v)}{\alpha_2+1}d_1(\mu, \nu) \le 2(u+v) d_1(\mu, \nu).$$
-  For the second distance, we let $Y^{(1)},Y^{(2)} \sim \nu$.  Then, following the same steps as in Lemma~\ref{prop:f}, we have
+  For the second distance, we let $Y^{(1)},Y^{(2)} \sim \nu$. Then, following the same steps as in Lemma~\ref{prop:f}, we have
   \begin{align*}
     d_1(T_{\alpha_1}(\mu), T_{\alpha_2}(\mu))
      & \le 2(u+v)(\alpha_1 - \alpha_2).

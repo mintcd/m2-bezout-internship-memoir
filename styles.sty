@@ -79,7 +79,7 @@
   {\bfseries} % Theorem head font
   {.}         % Punctuation after theorem head
   {.5em}      % Space after theorem head
-  {}          % Theorem head spec (can be left empty, meaning `normal`)
+  {\thmname{#1}\thmnumber{ #2}\thmnote{ \textbf{(#3)}}} % Bold optional title
 
 \theoremstyle{remarkstyle}
 \newtheorem{definition}{Definition}[chapter]

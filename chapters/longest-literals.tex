@@ -3,13 +3,13 @@
 
 \pablo{Little introduction here, even if a bit repetitive. Also to introduce the symbols $u,v,$ etc}
 
-Recall that in the BST-like model, $u$ is the probability of a concatenation node, $v$ is the probability of an alternation node, and $1-u-v$ is the probability of a Kleene star node. For a random regex tree of size $n$, the random variable $Y_n$ denotes the length of the longest literal extracted by Hyperscan, and we write $y_n=\EE[Y_n]$. This chapter studies the asymptotic behavior of $(y_n)$.
+Recall that in the BST-like model, $u$ is the probability of a concatenation node, $v$ is the probability of an alternation node, and $1-u-v$ is the probability of a Kleene star node. For a random regular expression tree of size $n$, the random variable $Y_n$ denotes the length of the longest literal extracted by Hyperscan, and we write $y_n=\EE[Y_n]$. This chapter studies the asymptotic behavior of $(y_n)$.
 
 We first bound $(y_n)$ between deterministic recurrences. The upper bound replaces every maximum by a sum, while the lower bound uses the maximum of the expectations. The main deterministic object is the tightened lower bound $(z_n)$ defined in \eqref{eq:lower-bound-tighter}. We prove successively that $z_n=n^{\alpha+o(1)}$, that $z_n=\Theta(n^\alpha)$, and, under the stronger condition $u>1/2$, that $z_n\sim Cn^\alpha$ for some $C>0$; see Theorem~\ref{thm:exact-asymptotics}. The last section returns to the original stochastic recurrence and outlines a fixed-point approach for the asymptotics of $(y_n)$.
 
 \section{Lower and upper bounds}
 
-Consider the recurrence \eqref{eq:longest-literal-recurrence}. Denote $y_n := \EE[Y_n]$ for $n \ge 1$. Taking the expectation of both sides in the recurrence \eqref{eq:longest-literal-recurrence}, we have for $n \ge 1$,
+Consider the recurrence \eqref{eq:longest-literal-recurrence}. Denote $y_n := \EE[Y_n]$ for $n \ge 1$. Taking expectations in \eqref{eq:longest-literal-recurrence} gives, for $n \ge 1$,
 
 \begin{equation}
   \label{eq:expected-longest-literal-recurrence}
@@ -32,7 +32,7 @@ Similarly, the inequality $\max(a,b) \ge \frac{1}{2}(a+b)$ gives a lower bound s
   \label{eq:lower-bound}
   z_{n+2} = \dfrac{2u+v}{n}\sum\limits_{i=1}^n z_{i}, \quad n \ge 1, \quad z_1 = 1, z_2 = 0.
 \end{equation}
-It is possible to employ a transfer theorem from analytic combinatorics to analyze the asymptotic behavior of \eqref{eq:upper-bound} and \eqref{eq:lower-bound} (Appendix \ref{subsec:asymptotics-of-recurrences-that-include-a-sum-of-history}). The lower bound can be tightened by using
+A transfer theorem from analytic combinatorics gives the asymptotic behavior of \eqref{eq:upper-bound} and \eqref{eq:lower-bound}; see Appendix \ref{subsec:asymptotics-of-recurrences-that-include-a-sum-of-history}. The lower bound can be tightened by using
 $$\EE\left[\max\left(Y_{i}^{(1)}, Y_{n+1-i}^{(2)}\right)\right] \ge \max\left(\EE\left[Y_{i}^{(1)}\right], \EE\left[Y_{n+1-i}^{(2)}\right]\right) = \max\left(y_i, y_{n+1-i}\right).$$
 This is not sharp since equality holds only when $Y_{i}^{(1)} = Y_{n+1-i}^{(2)}$ a.s. The tightened lower bound recurrence is then given by
 \begin{equation}
@@ -43,12 +43,14 @@ We analyze it in more detail in the next section.
 
 \section{Asymptotics of the lower bound recurrence}
 
-The sequence defined by \eqref{eq:lower-bound-tighter} is bounded between those defined by \eqref{eq:upper-bound} and \eqref{eq:lower-bound}. It is shown that if the following conditions hold
+The sequence defined by \eqref{eq:lower-bound-tighter} is bounded between those defined by \eqref{eq:upper-bound} and \eqref{eq:lower-bound}. Under the conditions
 \begin{equation}
   \label{eq:parameter-conditions}
   u,v \ge 0, \quad u < 1, \quad u+v\le1, \quad 2u+v > 1,
 \end{equation}
-then both \eqref{eq:upper-bound} and \eqref{eq:lower-bound} grow as a pure power of $n$, without any lower-order factor like the logarithm. In this section, we apply different techniques to prove asymptotic theorems of increasing strength. The strongest theorem is about the exact asymptotics, i.e., $z_n\sim Cn^{\alpha}$ for some constants $C > 0$ and $\alpha > 0$. As a heuristic, assume that $z_n \sim Cn^{\alpha}$ for some constants $C > 0$ and $\alpha > 0$. Substituting this estimate into \eqref{eq:lower-bound-tighter}, we get
+both \eqref{eq:upper-bound} and \eqref{eq:lower-bound} grow as a pure power of $n$, without any lower-order factor such as a logarithm. In this section, we use several techniques to prove asymptotic theorems of increasing strength. The strongest theorem gives exact asymptotics, namely $z_n\sim Cn^{\alpha}$ for some constants $C > 0$ and $\alpha > 0$.
+
+As a heuristic, assume that $z_n \sim Cn^{\alpha}$ for some constants $C > 0$ and $\alpha > 0$. Substituting this estimate into \eqref{eq:lower-bound-tighter}, we get
 \begin{align*}
   Cn^\alpha
    & \sim \dfrac{2u}{n}\sum\limits_{i=1}^n C i^\alpha + \dfrac{v}{n}\sum\limits_{i=1}^n C\max\left(i^\alpha, (n+1-i)^\alpha\right)                   \\
@@ -63,7 +65,7 @@ Thus, we must have
   \alpha + v2^{-\alpha} = 2(u+v) - 1.
 \end{equation}
 
-Note that we indeed have $\alpha>0$, since otherwise $2u+v = 1$. Numerical experiments regarding the ratio $z_n/n^{\alpha}$ are illustrated in Figure \ref{fig:ratios}. Now we state the asymptotic theorems.
+The condition $2u+v>1$ ensures that $\alpha>0$; otherwise $2u+v = 1$. Numerical experiments regarding the ratio $z_n/n^{\alpha}$ are illustrated in Figure \ref{fig:ratios}. We now state the asymptotic theorems.
 
 \begin{figure}
   \begin{subfigure}[c]{0.45\linewidth}
@@ -105,7 +107,7 @@ For the exact asymptotics, we need to impose stricter conditions, for reasons th
   Let $(z_n)$ be defined by \eqref{eq:lower-bound-tighter}, let $\alpha$ be the solution to \eqref{eq:alpha-equation}, and let $u,v$ be the parameters satisfying \eqref{eq:parameter-conditions-stronger}. Then $z_n\sim C n^\alpha$ for some constant $C > 0$.
 \end{theorem}
 
-Let us proceed with Theorem \ref{thm:weaker-asymptotics}. Rewrite the recurrence in \eqref{eq:lower-bound-tighter} as
+We begin with Theorem \ref{thm:weaker-asymptotics}. Rewrite the recurrence in \eqref{eq:lower-bound-tighter} as
 
 \begin{equation}
   \label{eq:lower-bound-tighter-rewritten}
@@ -130,7 +132,7 @@ Keeping in mind the heuristic $z_n \sim Cn^\alpha$, we try to approximate the ri
   $$\dfrac{1}{n}\sum\limits_{i=1}^n F\left(\left(\dfrac{i}{n}\right)^\alpha, \left(1-\dfrac{i}{n}+\dfrac{1}{n}\right)^\alpha\right) \to \Lambda(\alpha).$$
 
   Note that $\Lambda$ is continuous on $[0,1]$ with respect to $\alpha$, and the left-hand side is different from its Riemann sum only by a perturbation $1/n$ in the second argument. We show that the perturbation is negligible. Define for $x\in [0,1]$ the functions
-  $$f_n(x) = F\left(x^\alpha, \left(1-x+\dfrac{1}{n}\right)^\alpha\right) \text{ and } f(x) = F(x^\alpha, (1-x)^\alpha),$$
+  $$f_n(x) = F\left(x^\alpha, \left(1-x+\dfrac{1}{n}\right)^\alpha\right) \text{ and } f(x) = F(x^\alpha, (1-x)^\alpha).$$
   For $a,b,c \ge 0$ and $\alpha \in (0,1]$, we have
   $$|\max(a,b) - \max(a,c)| \le |b-c| \text{ and }
     (a+b)^\alpha \le a^\alpha + b^\alpha.$$
@@ -144,12 +146,12 @@ Keeping in mind the heuristic $z_n \sim Cn^\alpha$, we try to approximate the ri
   $$\left|\dfrac{1}{n}\sum\limits_{i=1}^n f_n\left(\dfrac{i}{n}\right) - \dfrac{1}{n}\sum\limits_{i=1}^n f\left(\dfrac{i}{n}\right)\right| \le \|f_n-f\|_\infty \to 0.$$
 \end{proof}
 
-Note that the unique value of $\alpha$ such that $\Lambda(\alpha) = 1$ is the solution to \eqref{eq:alpha-equation}. Indeed, its derivative is
+The unique value of $\alpha$ such that $\Lambda(\alpha) = 1$ is the solution to \eqref{eq:alpha-equation}. To see this, compute
 \begin{align*}
    & \Lambda'(\alpha) = \dfrac{v2^{-\alpha}\ln 2}{\alpha+1} - \dfrac{2(u+v)-v2^{-\alpha}}{(\alpha+1)^2} = \dfrac{v2^{-\alpha}((\alpha+1)\ln 2 + 1) - 2(u+v)}{(\alpha+1)^2}, \\
    & (2^{-\alpha}((\alpha+1)\ln 2 + 1))' = -2^{-\alpha}(\alpha+1)\ln^2(2) < 0.
 \end{align*}
-That implies
+This implies
 $$(\alpha+1)^2\Lambda'(\alpha) < (\alpha+1)^2\Lambda'(0) = -(2u + (1-\ln 2)v) < 0.$$
 Hence, $\Lambda$ is strictly decreasing. We also have $\Lambda(0) = 2u+v > 1$ and $\Lambda(1) = u+v/2 < 1$. We exploit the fact that $\Lambda(\beta) > 1$ for $\beta < \alpha$ and $\Lambda(\beta) < 1$ for $\beta > \alpha$ to prove Theorem \ref{thm:weaker-asymptotics}.
 
@@ -158,15 +160,15 @@ Hence, $\Lambda$ is strictly decreasing. We also have $\Lambda(0) = 2u+v > 1$ an
   $$A_n(\beta) < n^\beta < (n+2)^\beta.$$
   Let $M_n = \max_{1\le k \le n} \dfrac{z_i}{k^\beta}$. For $n \ge N$, we have
   $$z_{n+2} = \dfrac{1}{n}\sum_{i=1}^n F\left(z_i, z_{n+1-i}\right) \le M_n A_n(\beta) < M_n (n+2)^\beta.$$
-  Hence, $\dfrac{z_{n+2}}{(n+2)^\beta} < M_n$. Or $(M_n)$ is eventually decreasing. Therefore, $z_n = O(n^\beta)$.
+  Hence, $\dfrac{z_{n+2}}{(n+2)^\beta} < M_n$. Thus $(M_n)$ is eventually decreasing, and $z_n = O(n^\beta)$.
 
-  Similar argument applies for the lower bound, with an adjustment to deal with $z_2$. We have
+  A similar argument applies for the lower bound, with an adjustment to deal with $z_2$. We have
   $$A_n(\beta) \sim n^\beta \sim (n+2)^\beta \text{ and } A_n(\beta) \sim \dfrac{1}{n}\sum\limits_{i=3}^{n-2} F(i^\beta, (n+1-i)^\beta).$$
   Assume that $\beta < \alpha$. Then, $\Lambda(\beta) > 1$. Hence there exists $N\ge 3$ such that for all $n \ge N$,
   $$\dfrac{1}{n}\sum\limits_{i=3}^{n-2} F(i^\beta, (n+1-i)^\beta) > (n+2)^\beta.$$
   Let $m_n = \min_{3\le i \le n-2} \dfrac{z_i}{i^\beta}$. For $n \ge N$, we have
   $$z_{n+2} \ge \dfrac{1}{n}\sum_{i=3}^{n-2} F\left(z_i, z_{n+1-i}\right) \ge m_n \dfrac{1}{n}\sum\limits_{i=3}^{n-2} F(i^\beta, (n+1-i)^\beta) > m_n (n+2)^\beta.$$
-  Hence, $\dfrac{z_{n+2}}{(n+2)^\beta} > m_n$. Or $(m_n)$ is eventually increasing. Therefore, $z_n = \Omega(n^\beta)$.
+  Hence, $\dfrac{z_{n+2}}{(n+2)^\beta} > m_n$. Thus $(m_n)$ is eventually increasing, and $z_n = \Omega(n^\beta)$.
 \end{proof}
 
 The proof of Theorem \ref{thm:theta-asymptotics} uses a fine-grained induction. We first prepare integral bounds for the sum of the maximum terms.
@@ -178,7 +180,7 @@ The proof of Theorem \ref{thm:theta-asymptotics} uses a fine-grained induction. 
 \end{lemma}
 
 \begin{proof}
-  We first prove the upper bound on the first sum. We will use the following bounds for $t\ge 0$
+  We first prove the upper bound on the first sum. We will use the following bounds for $t\ge 0$:
   $$f(t) \le \int_{t}^{t+1} f(x) \, \mathrm{d}x \le 2 \int_{t+1/2}^{t+1} f(x) \, \mathrm{d}x.$$
 
   If $n=2k$, we have
@@ -192,9 +194,9 @@ The proof of Theorem \ref{thm:theta-asymptotics} uses a fine-grained induction. 
 
 
 \begin{proof}[Proof of Theorem \ref{thm:theta-asymptotics}]
-  We prove the lower bound. It is clear that $z_n > 0$ for all $n\ne 2$. The main idea is to isolate $z_2$. The induction hypothesis is $z_n \ge K (n+L)^\alpha$ for $n\neq 2$. The base cases and the exact constants are determined later. We need
+  We prove the lower bound. First, $z_n > 0$ for all $n\ne 2$. The main idea is to isolate $z_2$. The induction hypothesis is $z_n \ge K (n+L)^\alpha$ for $n\neq 2$. The base cases and the exact constants are determined later. We need
   $$\max(z_2, z_{n-1})= z_{n-1} \ge \max((2+L)^\alpha, (n-1+L)^\alpha).$$
-  Hence consider $n \ge 3$ and then
+  Thus, for $n \ge 3$,
   \begin{align*}
     nz_{n+2}
      & = 2u\sum\limits_{i=1}^n z_i + v\sum\limits_{i=1}^n \max(z_i, z_{n+1-i})                                                                \\
@@ -230,7 +232,7 @@ The proof of Theorem \ref{thm:theta-asymptotics} uses a fine-grained induction. 
 
   \pablo{$K$ below is not the same as above. Write e.g., $\tilde{K}$}
 
-  Now we prove the upper bound. Our induction hypothesis is $z_n \le \tilde{K} (n-1)^\alpha$ for $n\ge 2$, for some constant $\tilde{K} > 1$. The base case $z_2=0$ is trivially satisfied. For $n\ge 2$, we have
+  We now prove the upper bound. Our induction hypothesis is $z_n \le \tilde{K} (n-1)^\alpha$ for $n\ge 2$, for some constant $\tilde{K} > 1$. The base case $z_2=0$ is trivially satisfied. For $n\ge 2$, we have
   \begin{align*}
     nz_{n+2}
      & = 2u + 2u\sum\limits_{i=2}^n z_i + v\sum\limits_{i=1}^n \max(z_i, z_{n+1-i})                                              \\
@@ -248,7 +250,7 @@ The proof of Theorem \ref{thm:theta-asymptotics} uses a fine-grained induction. 
 \end{proof}
 
 \begin{remark}
-  In the proof of the lower bound we exploit the fact that $(n+L)^{\alpha+1}$ dominates $n(n+L+2)^{\alpha+1}$ when $L$ is large enough. Actually, we also have $(n-L)^{\alpha+1} \ll n(n-L+2)^{\alpha+1}$ when $L$ is large enough. However, if we apply the same idea to the upper bound, we cannot start the hypothesis from the beginning, but only after some $n > L$. We can overcome that by choosing $L=1$ and saving a fixed budget $2u$ in the first term. Nicely, that also leads to an algebraic convenience.
+  In the proof of the lower bound, we use the fact that $(n+L)^{\alpha+1}$ dominates $n(n+L+2)^{\alpha+1}$ when $L$ is large enough. Similarly, $(n-L)^{\alpha+1} \ll n(n-L+2)^{\alpha+1}$ for large $L$. However, applying the same idea to the upper bound would start the induction only after some $n > L$. We avoid this by choosing $L=1$ and saving a fixed budget $2u$ in the first term, which also gives a useful algebraic simplification.
 \end{remark}
 
 We now prove the exact asymptotics stated in Theorem \ref{thm:exact-asymptotics}. A natural goal is to remove the maximum operator. If $z_1=z_2=1$, then the sequence would be increasing from the beginning, and induction would allow us to eliminate the maximum operator. However, the initial conditions $z_1=1$ and $z_2=0$ make the sequence $(z_n)$ fluctuate during the first iterations, and the index at which it becomes increasing depends on the parameters $u$ and $v$. An extreme case of a long fluctuation period occurs when $u\to1/2+$ and $v\to0+$. We illustrate this phenomenon and compare the two cases in Figure~\ref{fig:difference-beginning}.
@@ -272,7 +274,7 @@ We now prove the exact asymptotics stated in Theorem \ref{thm:exact-asymptotics}
 
 Figure~\ref{fig:difference-beginning} compares the consecutive differences of the same recurrence under two close initializations, $z_1=z_2=1$ and $z_1=1,z_2=0$, in the difficult regime $u=0.5000001$ and $v=0.000001$. The second initialization can create a long initial fluctuation, which explains why monotonicity cannot simply be assumed from the beginning.
 
-It turns out that eventual monotonicity is sufficient to remove the maximum operator. Indeed, assume that there exists $N_1$ such that $z_{n+1} \ge z_n$ for all $n \ge N_1$. Since $(z_n)$ is unbounded, there exists $N_2 \ge N_1$ such that for all $n \ge N_2$, we have both $z_{n+1} \ge \max\limits_{1\le i \le N_1} z_i$ and $z_{n+1} \ge z_n$. That is
+Eventual monotonicity is sufficient to remove the maximum operator. Assume that there exists $N_1$ such that $z_{n+1} \ge z_n$ for all $n \ge N_1$. Since $(z_n)$ is unbounded, there exists $N_2 \ge N_1$ such that for all $n \ge N_2$, we have both $z_{n+1} \ge \max\limits_{1\le i \le N_1} z_i$ and $z_{n+1} \ge z_n$. That is,
 $$\forall n \ge N_2, \quad z_{n+1} \ge \max_{1 \le i \le n} z_i.$$
 Taking $N_3 = 2N_2-1$, we have \cyril{the writing $\forall \dfrac{N_3+1}{2}\le i \le N_3$ looks weird}
 $$\forall n \ge N_3,\quad \forall i\in\left\{\left\lceil\dfrac{n+1}{2}\right\rceil,\ldots,n\right\}, \quad z_{i} \ge z_{n+1-i}.$$
@@ -323,9 +325,9 @@ $$\Delta z_n = z_{n} - z_{n-1}.$$
   \end{align*}
   Since $u < 1$, we have $\alpha < 1$. By $z_n = \Theta(n^\alpha)$, we have $\dfrac{1}{n}(2uz_n + vz_1) \to 0$, or
   $$|\Delta z_{n+2}| \le v\sup_{1\le i \le n}|\Delta z_i| + o(1).$$
-  We have $v < 1$ since otherwise the condition $2u+v > 1$ would be violated. Then $(|\Delta z_i|)$ is bounded. Let $M = \sup_{n \ge 1} |\Delta z_n|$. Let $\epsilon > 0$, then there exists $N$ such that for all $n \ge N$, $|\Delta z_n| < M + \epsilon$. Therefore,
+  We have $v < 1$ since otherwise the condition $2u+v > 1$ would be violated. Therefore $(|\Delta z_i|)$ is bounded. Let $M = \sup_{n \ge 1} |\Delta z_n|$. For every $\epsilon > 0$, there exists $N$ such that for all $n \ge N$, $|\Delta z_n| < M + \epsilon$. Therefore,
   $$|\Delta z_{n+2}| \le v(M+\epsilon) + o(1).$$
-  Let $n\to\infty$, we have $M \le v(M+\epsilon)$. Since $\epsilon > 0$ is arbitrary, we have $M = 0$.
+  Letting $n\to\infty$ gives $M \le v(M+\epsilon)$. Since $\epsilon > 0$ is arbitrary, we have $M = 0$.
 \end{proof}
 
 Since $(z_n)$ is unbounded, we have the following corollary.
@@ -347,12 +349,14 @@ Since $(z_n)$ is unbounded, we have the following corollary.
 \begin{proof}
   We start from \eqref{eq:difference}
   $$n\Delta z_{n+2} = 2uz_n + v\max(z_n,z_1) - z_{n+2} + v\sum_{i=1}^{n-1} (\max(z_i, z_{n+2-i}) - \max(z_i, z_{n-i})).$$
-  Now with Corollary \ref{cor:eventual-exceed}, we have $\max(z_n,z_1)=z_n$ for all sufficiently large $n$. Hence, for all sufficiently large $n$,
+  By Corollary \ref{cor:eventual-exceed}, we have $\max(z_n,z_1)=z_n$ for all sufficiently large $n$. Hence, for all sufficiently large $n$,
   $$n\Delta z_{n+2} = (2u+v-1)z_n -\Delta z_n + v\sum_{i=1}^{n-1} (\max(z_{n-i}, z_{i+2}) - \max(z_{n-i}, z_{i})).$$
   For every $a \ge 0$, the function $x\mapsto \max(a,x)$ is increasing and $1$-Lipschitz. Hence for each $n,i$ there is some $\theta_{n,i}\in[0,1]$ satisfying \eqref{eq:difference-identity}.
 \end{proof}
 
-At this step, we have isolated the difference sequence $(\Delta z_n)$ from the original sequence $(z_n)$. Our next goal is to prove that $(\Delta z_n)$ is \textit{eventually positive}. That would be done if in \eqref{eq:difference-identity}, we can absorb a lower bound of $-\Delta z_n + v\sum_{i=1}^{n-1}\theta_{n,i}\Delta z_i$ into $(2u+v-1)z_n$. We already have $|\Delta z_n| = o(z_n)$ since $(\Delta z_n)$ is bounded. Because we do not know much about $\theta_{n,i}$, we can only apply the worst case to them. A basic inequality for absolute value leads to showing that $\sum_{i=1}^{n}|\Delta z_i| = o(z_n)$. Unfortunately, if it is true that $z_n\sim Cn^\alpha$ and $z_n$ is eventually increasing, then $\sum_{i=1}^{n}|\Delta z_i| \sim Cn^\alpha$. Therefore, we need a tighter lower bound. We will use the \textit{negative variation} of $\Delta z_n$. The negative variation is defined for every $x\in\mathbb{R}$ as
+At this step, we have isolated the difference sequence $(\Delta z_n)$ from the original sequence $(z_n)$. Our next goal is to prove that $(\Delta z_n)$ is \textit{eventually positive}. This would follow if, in \eqref{eq:difference-identity}, a lower bound for $-\Delta z_n + v\sum_{i=1}^{n-1}\theta_{n,i}\Delta z_i$ could be absorbed into $(2u+v-1)z_n$. We already have $|\Delta z_n| = o(z_n)$ since $(\Delta z_n)$ is bounded.
+
+Because little is known about $\theta_{n,i}$, we can only use a worst-case bound. A basic absolute-value estimate would require proving that $\sum_{i=1}^{n}|\Delta z_i| = o(z_n)$. However, if $z_n\sim Cn^\alpha$ and $z_n$ is eventually increasing, then $\sum_{i=1}^{n}|\Delta z_i| \sim Cn^\alpha$. We therefore need a tighter lower bound. We use the \textit{negative variation} of $\Delta z_n$, defined for every $x\in\mathbb{R}$ as
 \begin{equation}
   x_{-} = \max(-x,0).
 \end{equation}
@@ -363,7 +367,7 @@ We have
   -x \le x_{-} \text{ and } 0 \le x_{-}.
 \end{equation}
 
-Define the negative variation series $(\Delta z_n)$ as
+Define the negative variation series of $(\Delta z_n)$ as
 \begin{equation}
   \label{eq:negative-variation}
   V_n := \sum_{i=1}^{n} (\Delta z_i)_{-}.
@@ -418,14 +422,14 @@ Numerical experiments suggest that $(V_n)$ is likely bounded. For the proof of e
   Iterating this inequality gives
   $$V_m + \dfrac{M}{v}
     \le \prod_{i=N}^{m-2}\left(1+\dfrac{v}{i}\right)\left(V_{N+1} + \dfrac{M}{v}\right).$$
-  We are left to estimate the product. Taking the logarithm gives
+  It remains to estimate the product. Taking the logarithm gives
   \begin{align*}
     \ln\left(\prod_{i=N}^{m-2}\left(1+\frac{v}{i}\right) \right)
      & = \sum_{i=N}^{m-2}\ln\left(1+\frac{v}{i}\right)         \\
      & \le \sum_{i=N}^{m-2} \frac{v}{i} = v(H_{m-2} - H_{N-1}) \\
      & \le vH_m \le v\ln m + C,
   \end{align*}
-  where $H_n=\sum_{i=1}^n \frac{1}{i} = \ln n + \gamma + O(1/n)$ is the $n$-th harmonic number and $C$ is some constant. Taking back the exponential of both sides yields
+  where $H_n=\sum_{i=1}^n \frac{1}{i} = \ln n + \gamma + O(1/n)$ is the $n$-th harmonic number and $C$ is some constant. Exponentiating both sides yields
   $$\prod_{i=N}^{m-2} \left( 1 + \frac{v}{i} \right) \le e^{C} m^v = O(m^v).$$
 \end{proof}
 
@@ -442,11 +446,11 @@ We state our checkpoint as a theorem.
 
 When $v=0$, the recurrence \eqref{eq:lower-bound-tighter} reduces to the full-history recurrence \eqref{eq:lower-bound}, whose asymptotics are handled by Proposition~\ref{lem:full-history-sum-asymptotics}. Thus the negative-variation argument is only needed for $v>0$.
 
-Let us reduce the condition $0<v < \alpha$ in terms of $u$ and $v$. Define
+We now express the condition $0<v < \alpha$ in terms of $u$ and $v$. Define
 $$f(\alpha) = \alpha + 1 - 2(u + v) + v 2^{-\alpha}, \alpha\in[0,1].$$
 Then $f'(\alpha) = 1 - v2^{-\alpha}\ln2 > 1-\ln2 > 0$ for all $\alpha > 0$. Hence $v < \alpha$ is equivalent to $f(v) < 0$ i.e.,
 $$v + 1 - 2(u + v) + v 2^{-v} < 0 \iff u > \frac{1}{2}(1 - v + v 2^{-v}).$$
-For $v>0$, if we impose conditions \eqref{eq:parameter-conditions-stronger}, then the above inequality is satisfied. The case $v\ge \alpha$ with $v>0$ is left open. With $(z_n)$ being eventually increasing, it has a nicer recurrence without the whole history.
+For $v>0$, if we impose conditions \eqref{eq:parameter-conditions-stronger}, then the above inequality is satisfied. The case $v\ge \alpha$ with $v>0$ is left open. Once $(z_n)$ is eventually increasing, it satisfies a simpler recurrence without the whole history.
 
 \begin{lemma}
   There exists $N\ge 1$ such that the sequence $(z_n)_{n\ge N}$ defined by \ref{eq:lower-bound-tighter} satisfies the recurrence
@@ -486,7 +490,7 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
              & \dfrac{1}{n}\left(1-\dfrac{2}{n}\right)^{\alpha} = \dfrac{1}{n} + O\left(\dfrac{1}{n^2}\right),                         \\
              & \frac{1}{n}\left(\dfrac{\lfloor n/2\rfloor-2}{n}\right)^{\alpha} = \frac{2^{-\alpha}}{n} + O\left(\frac{1}{n^2}\right).
           \end{align*}
-          The last expansion is because $\dfrac{1}{2}-\dfrac{3}{n} \le \dfrac{\lfloor n/2\rfloor-2}{n} \le \dfrac{1}{2}-\dfrac{1}{n}$. Since $\alpha$ solves \eqref{eq:alpha-equation},we have
+          The last expansion follows from $\dfrac{1}{2}-\dfrac{3}{n} \le \dfrac{\lfloor n/2\rfloor-2}{n} \le \dfrac{1}{2}-\dfrac{1}{n}$. Since $\alpha$ solves \eqref{eq:alpha-equation}, we have
           \begin{align*}
             x_{n+2}-x_{n+1}
              & = -\dfrac{\alpha+1}{n}x_{n+1} + \dfrac{2(u+v)}{n}x_{n} - \frac{v2^{-\alpha}}{n}x_{\lfloor n/2\rfloor} + O\left(\frac{1}{n^2}\right)   \\
@@ -526,7 +530,7 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
           \begin{align*}
             u_m < \dfrac{K_1}{(1-\gamma_1)}\sum_{i=m_0+1}^m \gamma_2^m + \gamma_2^{m-m_0}u_{m_0} \le K_2 m\gamma_2^m,
           \end{align*}
-          for some constant $K_2>0$. Choose $\gamma_3$ such that $\gamma_2 < \gamma_3 < \dfrac{1}{2}$. Then there exists $m_1>m_0$ such that for every $m\ge m_1$, we have $K_2m\gamma_2^m < K_2\gamma_3^m$, implying that,
+          for some constant $K_2>0$. Choose $\gamma_3$ such that $\gamma_2 < \gamma_3 < \dfrac{1}{2}$. Then there exists $m_1>m_0$ such that for every $m\ge m_1$, we have $K_2m\gamma_2^m < K_2\gamma_3^m$, implying that
           $$u_m < K_2\gamma_3^m.$$
           Therefore,
           \begin{align*}
@@ -540,7 +544,9 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
 
         \subsection{Proof strategy}
 
-        The stochastic recurrence \eqref{eq:longest-literal-recurrence} looks similar to its deterministic counterpart \eqref{eq:lower-bound-tighter}. With the results that the lower and upper bounds grow as a pure power of $n$, it is plausible to conjecture the same situation for the sequence $(y_n)$ defined by \eqref{eq:expected-longest-literal-recurrence}. Numerical experiments based on Monte-Carlo simulation (see Appendix \ref{subsec:monte-carlo-simulation}) support this conjecture, as shown in Figure \ref{fig:growth-comparison}. For each case of $(u,v)$, we compute the power $\alpha$ using the algorithm expressed in \eqref{eq:mean-preserving-recurrence}, and the constant $C=z_n/n^\alpha$, where $n$ is the number of iterations. More details of the algorithm are given later in this section. The growth power of $y_n$ is strictly larger than the solution to \eqref{eq:alpha-equation}. This suggests that in long-term, $\EE\left[\max(Y_i, Y_j)\right]$ is still more selective than $\max(\EE[Y_i], \EE[Y_j])$, especially when $i$ and $j$ are close to each other.
+        The stochastic recurrence \eqref{eq:longest-literal-recurrence} resembles its deterministic counterpart \eqref{eq:lower-bound-tighter}. Since \eqref{eq:lower-bound-tighter} grows as a pure power of $n$, it is natural to conjecture the same behavior for the expectation in \eqref{eq:expected-longest-literal-recurrence}. Numerical experiments based on Monte Carlo simulation support this conjecture, as shown in Figure \ref{fig:growth-comparison}. For each case of $(u,v)$, we compute the exponent $\alpha$ using the algorithm expressed in \eqref{eq:mean-preserving-recurrence}, and the constant $C=z_n/n^\alpha$, where $n$ is the number of iterations. More details of the algorithm are given later in this section.
+
+        The growth exponent of $y_n$ is strictly larger than the solution to \eqref{eq:alpha-equation}. This suggests that, in the long term, $\EE\left[\max(Y_i, Y_j)\right]$ remains more selective than $\max(\EE[Y_i], \EE[Y_j])$, especially when $i$ and $j$ are close to each other.
 
         \begin{figure}
           \begin{subfigure}[c]{0.45\linewidth}
@@ -558,7 +564,7 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
         \end{figure}
 
 
-        In this section, we present an ongoing attempt towards the weakest asymptotic result $y_n = n^{\alpha^\star + o(1)}$. We adapt the contraction method (e.g., \cite{neininger2004general}). The original idea is as follows.
+        In this section, we present an ongoing attempt to prove the weakest asymptotic result $y_n = n^{\alpha^\star + o(1)}$. We adapt the contraction method (e.g., \cite{neininger2004general}). The original idea is as follows.
         \begin{enumerate}
           \item Guess the scaling factor and derive the normalized recurrence.
           \item Derive a limiting fixed-point equation from the normalized recurrence.
@@ -566,7 +572,7 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
           \item Prove that the normalized sequence converges in distribution to that unique solution.
         \end{enumerate}
 
-        The contraction method does not directly apply to our case. Let $X_n = Y_n/n^\alpha$ for $\alpha > 0$. We have the recurrence for $X_n$ and the limiting equation as follows.
+        We first explain why the contraction method does not apply directly. Let $X_n = Y_n/n^\alpha$ for $\alpha > 0$. The recurrence for $X_n$ and the limiting equation are as follows.
 
         \begin{equation}
           \label{eq:scaled-recurrence}
@@ -587,23 +593,20 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
           where $U \sim \mathrm{Unif}[0,1]$.
         \end{lemma}
 
-        The proof of Lemma \ref{lem:limiting-equation} is given in Appendix \ref{subsec:proof-limiting-equation}. Let $\D$ be the space of probability measures on $\mathbb{R}$. Our first goal is to prove that there exists a unique solution $(X^\star,\alpha^\star)$ to \eqref{eq:limiting-equation} in some subspace of $\D$. The question is therefore how to choose this subspace. The fixed-point equation \eqref{eq:limiting-equation} always has an undesired solution $\delta_0$, so the subspace should exclude $\delta_0$. Define the operator $T: \D \to \D$ induced by the right-hand side of \eqref{eq:limiting-equation} as
+        The proof of Lemma \ref{lem:limiting-equation} is given in Appendix \ref{subsec:proof-limiting-equation}. Let $\D$ be the space of probability measures on $\mathbb{R}_+$. Our first goal is to prove that there exists a unique solution $(X^\star,\alpha^\star)$ to \eqref{eq:limiting-equation} in some subspace of $\D$. The fixed-point equation \eqref{eq:limiting-equation} always has a degenerate solution $\delta_0$. The question is therefore to choose a suitable subspace that excludes $\delta_0$. Define the operator $T_\alpha: \D \to \D$ induced by the right-hand side of \eqref{eq:limiting-equation} as
         \begin{equation}
           \label{eq:operator-T}
           T_{\alpha}(\mu) = \mathcal{L}\left(I\left(U^\alpha X^{(1)} + (1-U)^\alpha X^{(2)}\right) + J\max(U^\alpha X^{(1)}, (1-U)^\alpha X^{(2)})\right), \quad X^{(1)}, X^{(2)} \stackrel{\text{iid}}{\sim}\mu.
         \end{equation}
-        Define the recurrence according to $T_\alpha$ as
-        \begin{equation}
-          \label{eq:operator-T-recurrence}
-          \mu_{n+1} = T_{\alpha}(\mu_n), \quad n \ge 1,
-        \end{equation}
-        and $\mu_1$ is some initial distribution.
-        The contraction argument may not work. If $T_\alpha$ were a contraction in the Wasserstein metric for some $\alpha$, the sequence would collapse to $\delta_0$ from any $\mu_1$. While the Zolotarev metric allows us to choose a subspace excluding $\delta_0$, it requires certain first moments to remain fixed---a condition $T_\alpha$ violates, as it does not preserve the mean.
+        If $T_\alpha$ is a contraction with respect to the Wasserstein metric for some $\alpha$, then the Banach fixed-point theorem guarantees that $T^n_\alpha(\mu_1) \xrightarrow{d} 0$. While the Zolotarev metric \cite{zolotarev1977approximation} allows us to choose a subspace excluding $\delta_0$, it requires certain first moments to remain fixed---a condition $T_\alpha$ violates, as it does not preserve the mean. The original contraction method requires choosing a more suitable metric space, which we consider intractable.
 
-        An intuition behind the evolution of \eqref{eq:operator-T-recurrence} is as follows. Let $\alpha$ be fixed. At each iteration, $T_\alpha$ alters the shape of the distribution $\mu_n$. Depending on the ``dispersion'' of $\mu_n$, $T_\alpha$ will either increase or decrease its mean. If $\alpha$ is too large, $T_\alpha$ drives the mean to $0$ before the distribution becomes sufficiently dispersed. Conversely, if $\alpha$ is too small, $T_\alpha$ pushes the mean to infinity once the distribution is adequately dispersed.
-        The mean is not positively correlated with the need for a larger $\alpha$. Let $\mu = \delta_2$ and $\nu = 2\text{Ber}(1/2)$, then $\EE_{X\sim\mu}[X] = 2 > 1 = \EE_{Y\sim\nu}[Y]$. Then let $\alpha$ solve \eqref{eq:alpha-equation}. Then $\EE_{X\sim\mu}[T_\alpha(X)] = \EE_{X\sim\mu}[X]$ but $\EE_{Y\sim\nu}[T_\alpha(Y)] > \EE_{Y\sim\nu}[Y]$. That means although $\mu$ has a larger mean than $\nu$, it requires a smaller $\alpha$ to keep its mean fixed. This is because $\nu$ is more dispersed than $\mu$. Unfortunately, the second moment is still not sufficient. One can build a similar counterexample by choosing $\mu$ and $\nu$ of the same mean, $\mathbb{E}_{X\sim\mu}[X^2] > \mathbb{E}_{Y\sim\nu}[Y^2]$, and $\mathbb{E}_{X\sim\mu}[X^3] < \mathbb{E}_{Y\sim\nu}[Y^3]$. If the third moments differ enough compared with how different the second moments are, then $\EE_{X\sim\mu}[T_\alpha(X)] < \EE_{Y\sim\nu}[T_\alpha(Y)]$. Now it is clear that no finite number of moments is sufficient to determine the correct $\alpha$ that keeps the mean fixed.
+        The evolution of an initial distribution under $T_\alpha$ can be understood as follows. At each iteration, $T_\alpha$ changes the shape of the distribution $\mu_n$. Depending on the ``dispersion'' of $\mu_n$, $T_\alpha$ either increases or decreases its mean. If $\alpha$ is too large, $T_\alpha$ drives the mean to $0$ before the distribution becomes sufficiently dispersed. Conversely, if $\alpha$ is too small, $T_\alpha$ pushes the mean to infinity once the distribution is sufficiently dispersed.
 
-        Another observation is that for each fixed $\mu$, there exists a unique $\alpha$ that keeps the mean fixed. We state it below and leave the proof in Appendix \ref{subsec:proof-prop-f}.
+        The mean is not positively correlated with the need for a larger $\alpha$. Let $\mu = \delta_2$ and $\nu = 2\text{Ber}(1/2)$, so that $\EE_{X\sim\mu}[X] = 2 > 1 = \EE_{Y\sim\nu}[Y]$. If $\alpha$ solves \eqref{eq:alpha-equation}, then $\EE_{X\sim\mu}[T_\alpha(X)] = \EE_{X\sim\mu}[X]$, but $\EE_{Y\sim\nu}[T_\alpha(Y)] > \EE_{Y\sim\nu}[Y]$. Thus, although $\mu$ has a larger mean than $\nu$, it requires a smaller $\alpha$ to keep its mean fixed. This is because $\nu$ is more dispersed than $\mu$.
+
+        The second moment is still not sufficient. One can build a similar counterexample by choosing $\mu$ and $\nu$ with the same mean, $\mathbb{E}_{X\sim\mu}[X^2] > \mathbb{E}_{Y\sim\nu}[Y^2]$, and $\mathbb{E}_{X\sim\mu}[X^3] < \mathbb{E}_{Y\sim\nu}[Y^3]$. If the third moments differ enough compared with the second moments, then $\EE_{X\sim\mu}[T_\alpha(X)] < \EE_{Y\sim\nu}[T_\alpha(Y)]$. Thus no finite number of moments is sufficient to determine the correct $\alpha$ that keeps the mean fixed.
+
+        For each distribution $\mu$ of finite mean, there exists a unique $\alpha$ that keeps the mean fixed. Since $T_\alpha$ is homogeneous, we consider the space $\D(1)$ of probability measures on $\mathbb{R}_+$ with mean $1$. We state the property below and leave the proof to Appendix \ref{subsec:proof-prop-f}.
 
         \begin{proposition}
           \label{prop:f}
@@ -614,7 +617,7 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
           $$\forall \alpha \in (0,\alpha_0), f(\mu, \alpha) > 1 \text{ and } \forall \epsilon\in (0,2u+v-1-\alpha_0), \exists \mu\in \D_2(1), f(\mu, \alpha) = 1.$$
         \end{proposition}
 
-        A promising approach to find the true $\alpha$ is to let the distribution and its mean-preserving operator evolve together. By Proposition \ref{prop:f}, the function $\alpha: \mathcal{D}(1) \to (0,1]$ such that $\EE_{X\sim\mu}[T_{\alpha(\mu)}(X)] = 1$ is well-defined. We can then define the mean-preserving recurrence as follows. The evolution of $\alpha$ and the 2-Wasserstein distance between consecutive distributions following the recurrence is shown in Figure \ref{fig:mean-preserving-recurrence-evolution}. Fluctuations in the final iterations are likely a side effect of the Monte-Carlo simulation, since they become more stable when the number of samples is increased.
+        A promising approach for finding the true $\alpha$ is to let the distribution and its mean-preserving operator evolve together. By Proposition \ref{prop:f}, the function $\alpha: \mathcal{D}(1) \to (0,1]$ such that $\EE_{X\sim\mu}[T_{\alpha(\mu)}(X)] = 1$ is well-defined. We can then define the mean-preserving recurrence as follows.
 
 \begin{equation}
   \label{eq:mean-preserving-recurrence}
@@ -638,30 +641,34 @@ With the recurrence \eqref{eq:delayed-recurrence}, we can now prove the exact as
   \label{fig:mean-preserving-recurrence-evolution}
 \end{figure}
 
-Proving that $(\mu_n, \alpha_n)$ converges may be challenging. We would like to track a quantity that evolves monotonically with the iterations. Simulations support the fact that moments higher than the first moment are monotonically increasing. However, we could not prove that fact, probably as discussed above, because they cannot be used to determine the correct $\alpha$ that keeps the mean fixed. Our strategy is as follows.
+The evolution of $\alpha$ and the 2-Wasserstein distance between consecutive distributions following the recurrence is shown in Figure \ref{fig:mean-preserving-recurrence-evolution}. Fluctuations in the final iterations are likely a side effect of the Monte Carlo simulation, since they become more stable when the number of samples is increased. However, proving that $(\mu_n, \alpha_n)$ converges may be challenging. We intended to track a quantity that evolves monotonically with the iterations. Experiments suggest in particular that the higher moments increase through iterations, but we could not complete this approach. Our alternative strategy takes advantage of Tychonoff's theorem, a non-constructive topological existence result. We summarize our proof strategy as follows, and proceed with the first step in the next subsection.
 \begin{enumerate}
   \item Prove that there exists a unique solution $(X^\star, \alpha^\star)$ to \eqref{eq:limiting-equation}.
   \item Prove that for every $\epsilon > 0$, $\EE\left[Y_n/n^{\alpha^\star + \epsilon}\right]\to 0$ and $\EE\left[Y_n/n^{\alpha^\star - \epsilon}\right]\to \infty$.
-  \item Prove that \ref{eq:mean-preserving-recurrence} converges to $(X^\star, \alpha^\star)$.
+  \item Prove that \eqref{eq:mean-preserving-recurrence} converges to $(X^\star, \alpha^\star)$.
 \end{enumerate}
 
 In the next subsection, we present a partial result towards the first step.
 
-\subsection{Partial proof of uniqueness of the fixed point}
+\subsection{A fixed-point approach: existence}
 
-Since the contraction argument may not be applicable to proving the uniqueness of the fixed point, we decompose the problem to proving existence and then uniqueness. Existence is proved using Tychonoff fixed-point theorem.
+Since the contraction argument may not be applicable to proving uniqueness of the fixed point, we decompose the problem into proving existence and then uniqueness. Existence is proved using Tychonoff's fixed-point theorem.
 
 \begin{theorem}[{Tychonoff \cite[Exercise 2.5c]{zeidler1986nonlinear}}]
   Let $\C$ be a nonempty, compact, convex subset of a locally convex space $\M$. Let $f: \C \to \C$ be a continuous mapping. Then $f$ has a fixed point.
 \end{theorem}
 
-Now we have to prepare the ingredients for the Tychonoff fixed-point theorem. Ideally, the subset $\C$ should be as small as possible while still containing $(\mu_n)$ in \eqref{eq:mean-preserving-recurrence} and $(\L(X_n))$ for $X_n$ defined in \eqref{eq:scaled-recurrence} for all $\alpha\in(2u+v-1, 2u+v)$. This makes uniqueness more plausible once existence is established. Define $\Phi: \D(1) \to \D(1)$ such that
+We now prepare the ingredients for the Tychonoff fixed-point theorem. Ideally, the subset $\C$ should be as small as possible while still containing $(\mu_n)$ in \eqref{eq:mean-preserving-recurrence} and $(\L(X_n))$ for $X_n$ defined in \eqref{eq:scaled-recurrence} for all $\alpha\in(2u+v-1, 2u+v)$. This makes uniqueness more plausible once existence is established. Define $\Phi: \D(1) \to \D(1)$ by
 \begin{equation}
   \label{eq:operator-phi}
   \Phi(\mu) = T_{\alpha(\mu)}(\mu), \quad \forall \mu\in \D(1).
 \end{equation}
 
-In the following, we will show that the subset $\C$ can be restricted to the set of distributions with uniformly bounded second moment.
+In the following, we will show that the subset $\C$ can be restricted to the set of distributions with uniformly bounded second moment. For $M > 0$, define
+\begin{equation}
+  \label{eq:bounded-second-moment}
+  \D_2(1, M) = \left\{\mu\in \D(1): \int_{0}^\infty x^2 \,\mathrm{d}\mu \le M\right\}.
+\end{equation}
 
 \begin{proposition}
   \label{prop:uniform-bounded-second-moment}
@@ -669,7 +676,7 @@ In the following, we will show that the subset $\C$ can be restricted to the set
 \end{proposition}
 
 
-The proof is given in Appendix \ref{subsec:proof-prop-phi}. Again, the condition $u>1/2$ is crucial. If we follow \eqref{eq:operator-T-recurrence}, then it is possible to choose $M = \max(1, M_0)$. In $D_2(1,M)$, the range in Proposition \ref{prop:f} can be slightly improved to $\left[\alpha_0, 2(u+v)-1-\dfrac{v}{2M}\right)$.
+The proof is given in Appendix \ref{subsec:proof-prop-phi}. Again, the condition $u>1/2$ is crucial. Choose $M = \max(1, M_0)$. In $D_2(1,M)$, the range in Proposition \ref{prop:f} can be slightly improved to $\left[\alpha_0, 2(u+v)-1-\dfrac{v}{2M}\right)$.
 
 The next ingredient is the host vector space $\M$. To avoid excessive elaboration, we combine two standard points of view. From probability theory, weak convergence can be defined using the space $C_b(\RR)$ of bounded, continuous test functions \cite[Chap. 1]{billingsley1999convergence}. From functional analysis, local convexity is obtained by equipping $C_b(\RR)$ with a topology and defining $\M$ as its dual space of continuous linear functionals. In this way, the weak topology on $\M$ (called the weak$^*$-topology in functional analysis) is induced by a family of seminorms $\{p_f\}_{f\in C_b(\RR)}$, which makes $\M$ a locally convex space. Finally, it is enough to have $\D_2(1, M)$ compact in $\M$. However, just as we want $\D_2(1, M)$ to be only large enough to contain our distributions of interest, we also want $\M$ to be only large enough to contain $\D_2(1, M)$, since a smaller host space is usually better behaved. We summarize the above discussion as follows, leaving the details to Appendix \ref{subsec:supp-locally-convex-spaces} and Appendix \ref{subsec:proof-prop-phi-continuity}.
 
