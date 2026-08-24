@@ -21,18 +21,17 @@
 \usepackage[colorlinks=true, linkcolor=black, citecolor=gustave, urlcolor=gustave]{hyperref}
 \usepackage{url} 
 
-\usepackage{amsfonts}
-\usepackage{mathrsfs} %maths fonts, might not need
 \usepackage{array} %extends array and tabular environments
 \usepackage{multirow} 
 
-
+\usepackage{amsfonts}
+\usepackage{mathrsfs} %maths fonts
 \usepackage{amsmath} %for writing maths
 \usepackage{extpfeil}
 \usepackage{adjustbox}%supplement to graphics package
 \usepackage{graphicx}
 
-\usepackage[nottoc]{tocbibind} %this adds bibliography to your ToC
+\usepackage[nottoc]{tocbibind} % adds bibliography to ToC
 \usepackage{siunitx} %you can declare the units you want as necessary read documentation
 \usepackage{enumitem}
 \usepackage{scalerel}
@@ -50,7 +49,7 @@
 \newif\ifshowcomments
 
 % 2. Toggle this between \showcommentstrue (draft) and \showcommentsfalse (final)
-\showcommentstrue
+\showcommentsfalse
 
 % 3. Define the commands conditionally
 \ifshowcomments
@@ -73,10 +72,12 @@
 \renewcommand*\contentsname{Contents}
 \tableofcontents
 \listoffigures
+
 \include{chapters/introduction}
+\include{chapters/concepts-and-techniques}
 \include{chapters/hyperscan-problems}
 \include{chapters/longest-literals}
-% \include{chapters/techniques}
+\include{chapters/conclusion}
 \include{chapters/appendix}
 \include{chapters/bib}
 

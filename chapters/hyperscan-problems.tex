@@ -1,25 +1,32 @@
-\chapter[An Overview of the Hyperscan Engine]{An Overview of the \\ Hyperscan Engine}
+\chapter[The Hyperscan Engine and Related Problems]{The Hyperscan Engine and \\ Related Problems}
 
-The regular expression matching engine Hyperscan \cite{wang2019hyperscan} was primarily developed by the startup company Sensory Networks in 2008, and was later acquired and open-sourced by Intel in 2013. Closed source in 2023 at version 5.4, it is forked into Vectorscan \cite{vectorscan} by VectorCamp to support more architectures like ARM. Since Vectorscan is still being actively maintained publicly, analyzing its core Hyperscan functionality still provides valuable insights into the design and optimization of high-performance regular expression matching engines, interesting to both academia and industry.
+The regular expression matching engine Hyperscan \cite{wang2019hyperscan} was primarily developed by the startup company Sensory Networks in 2008, and was later acquired and open-sourced by Intel in 2013. After Hyperscan became closed source in 2023 at version 5.4, VectorCamp forked it as Vectorscan \cite{vectorscan} to support more architectures, including ARM. Since Vectorscan is still actively maintained in public, analyzing the core functionality inherited from Hyperscan remains valuable for understanding the design and optimization of high-performance regular expression matching engines. Hyperscan is designed to match a set of regular expressions against a stream of data, with deep packet inspection as a primary use case. It highly leverages SIMD features.
 
-Hyperscan is designed to match a set of regular expressions against a stream of data, with its primary use case being deep packet inspection. The engine leverages SIMD (Single Instruction, Multiple Data) features supported by modern CPUs, which uses longer registers to process multiple similar operations in one instruction. Architecturally, it operates in two distinct phases: the compilation phase and the execution phase. It supports two modes of operation: block mode and stream mode. In block mode, the engine processes a single block of data at a time, while in stream mode, it maintains state across multiple blocks, allowing for continuous matching over a data stream. We focus on the block mode.
+This chapter is divided into three sections. The first two sections are descriptions of Hyperscan and one of its string matchers. Their mechanisms naturally lead to several problems stated in the last section.
+
+% It also supports two modes of operation: block mode and stream mode. In block mode, the engine processes one block of data at a time. In stream mode, it maintains state across blocks, allowing continuous matching over a data stream. We focus on block mode.
 
 \cyril{You have to introduce regular expressions, automata, SIMD instructions, \ldots Maybe in a separate short chapter with some definitions. You can be brief but someone like Laurent Hauswirth does not know what a regular expression is.}
 
 \pablo{Agreed, maybe actually expand on your chapter 1 with different subsections. Also comment on the Glushkov NFA.}
 
+\minh{Yeah. Let me move them to Chapter 2.}
 
 % Our analysis for the compile phase focuses on its decomposition-based optimization. In the execution phase, we examine its multi-string matchers.
 
 % Block and stream mode
 
-\section{Compilation}
+\section{Overview of Hyperscan}
+
+The architecture of Hyperscan includes two phases: compilation and execution. In the compilation phase, a set of regular expressions is converted into an internal database. The database is used in the execution phase to match the regular expressions against a stream of data. It supports two modes of operation: block mode and stream mode. In block mode, the engine processes one block of data at a time. In stream mode, it maintains state across blocks, allowing continuous matching over a data stream. We focus on block mode.
+
+\subsection{Compilation}
 
 An overview of the compilation process is illustrated in Figure \ref{fig:hs_compile_graph}. The compilation phase provides central APIs, such as the \href{https://github.com/intel/hyperscan/blob/master/src/hs_compile.h#L360}{\texttt{hs\_compile}} function. The function accepts a set of regular expressions. A facade object of class \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng.h#L63}{\texttt{NG}} is initialized, which consumes a compile context of type \href{https://github.com/intel/hyperscan/blob/master/src/util/compile_context.h#L43}{\texttt{CompileContext}}. Through the function \href{https://github.com/intel/hyperscan/blob/master/src/compiler/compiler.h#L116}{\texttt{addExpression}}, each expression is converted into a Glushkov NFA \cite{glushkov1961abstract} (through \href{https://github.com/intel/hyperscan/blob/master/src/compiler/compiler.h#L151}{\texttt{buildGraph}}) and added to the facade (through \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng.h#L71}{\texttt{NG.addGraph}}).
 
-In \texttt{NG.addGraph}, the NFA is firstly decomposed base on its language through \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng_calc_components.h#L47}{\texttt{calcComponents}}. If its language is $L$, it may be split into NFAs whose languages are $L_1, L_2, \ldots, L_n$ such that
+In \texttt{NG.addGraph}, the NFA is first decomposed based on its language through \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng_calc_components.h#L47}{\texttt{calcComponents}}. If its language is $L$, it may be split into NFAs whose languages are $L_1, L_2, \ldots, L_n$ such that
 $$L = L_1 \cup L_2 \cup \ldots \cup L_n.$$
-The components are added one by one through \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng.cpp#L205}{\texttt{addComponent}}, which then passed to the Violet subengine through the \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng_violet.h#L49}{\texttt{doViolet}} function, which in turn calls \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng_violet.cpp#L2989}{\texttt{doInitialVioletTransform}} and \href{https://github.com/intel/hyperscan/blob/master/src/rose/rose_build_impl.h#L507}{\texttt{RoseBuild.addRose}}.
+The components are added one by one through \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng.cpp#L205}{\texttt{addComponent}}, which is then passed to the Violet subengine through the \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng_violet.h#L49}{\texttt{doViolet}} function. This function in turn calls \href{https://github.com/intel/hyperscan/blob/master/src/nfagraph/ng_violet.cpp#L2989}{\texttt{doInitialVioletTransform}} and \href{https://github.com/intel/hyperscan/blob/master/src/rose/rose_build_impl.h#L507}{\texttt{RoseBuild.addRose}}.
 
 In \texttt{doInitialVioletTransform}, the graph analyses described in the Hyperscan paper---namely dominant path, dominant region, and network flow analysis---are performed. These analyses decompose the NFA into literals and sub-FAs, yielding a dependency graph that dictates the matching order. At this phase (\href{https://github.com/intel/hyperscan/blob/master/src/rose/rose_in_graph.h#L189}{\texttt{RoseInGraph}}), each literal is a vertex and each sub-FA acts as an edge. This graph is then passed to the Rose subengine for deduplication of FAs, compilation into bytecode, and execution orchestration. Notably, in the subsequent (\href{https://github.com/intel/hyperscan/blob/master/src/rose/rose_graph.h#L222}{\texttt{RoseGraph}}) representation, the sub-FAs are instead attached directly to their associated literal vertices via \texttt{left} or \texttt{suffix} properties. Multiple FAs may be merged into an FA with multiple initial states. Therefore, the \texttt{suffix} property also contains a sub-property \texttt{top} indicating which initial state should be chosen.
 
@@ -140,13 +147,16 @@ In \texttt{doInitialVioletTransform}, the graph analyses described in the Hypers
 \end{figure}
 
 \pablo{Expand on the example. Is there a difference between Edge and Vertex Property from a theoretical point of view?}
-Consider an example of a regular expression \texttt{abc[0-9]+xyz}. If we discard heuristics for short literals, then the graphs returned by Violet and Rose are as in Figures \ref{fig:rose_in_graph} and \ref{fig:rose_graph}, respectively. They both mean that if there is a match of \texttt{abc} that \textit{ends} at position $i$ (excluded) and a match of \texttt{xyz} that \textit{starts} at position $j$ (included), such that $j-i>0$, then the subtext at $[i, j)$ must match the sub-FA \texttt{[0-9]+}. Further optimization imposes that
+
+Consider an example of a regular expression \texttt{abc[0-9]+xyz}. If we discard heuristics for short literals, then the graphs returned by Violet and Rose are as in Figures \ref{fig:rose_in_graph} and \ref{fig:rose_graph}, respectively. Both graphs encode the same matching constraint: if a match of \texttt{abc} ends at position $i$ (excluded) and a match of \texttt{xyz} starts at position $j$ (included), then the subtext at $[i, j)$ must match the sub-FA \texttt{[0-9]+}. For this example, the gap must contain at least one digit. More generally, Hyperscan can further impose the width constraint
 $$m \le j-i \le M,$$
 where $m$ and $M$ are the minimum and maximum \textit{widths} of the sub-FA, i.e., the minimum and maximum lengths of possible strings that match the sub-FA.
 
-\section{Execution}
+From a theoretical point of view, the edge representation and the vertex-property representation are equivalent: both describe a dependency relation between the two literals together with an intervening sub-FA that has to be checked. The difference is mainly implementation-oriented. In \texttt{RoseInGraph}, the sub-FA appears as an edge because Violet is still expressing the decomposition of the NFA. In \texttt{RoseGraph}, Rose attaches the sub-FA to the relevant literal vertex through a property such as \texttt{left} or \texttt{suffix}. This representation is more convenient for the later compilation stages, where Rose deduplicates and merges FAs, records which initial state should be used, and emits the programs that are executed when a literal match is reported.
 
-An overview of the execution phase is illustrated in Figure \ref{fig:hs_scan_graph}. The process begins at \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/hs_runtime.h#L479}{\texttt{hs\_scan}}. There are three execution scenarios already determined by Rose: (1) the set of patterns are all literals (2) there are no literals that wake up FAs, and (3) literals wake up FAs. The last scenario is the most common. Its flow reaches \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/rose/rose.h#L41}{roseBlockExec}, where now one of its string matchers is called through \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/hwlm/hwlm.h#L116}{hwlmExec} together with a \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/rose/rose.h#L49}{roseCallback} function. The \texttt{roseCallback} function eventually calls \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/rose/program_runtime.h#L53}{roseRunProgram}. Here is where the \texttt{left} or \texttt{suffix} FAs are checked, waken up and executed.
+\subsection{Execution}
+
+An overview of the execution phase is illustrated in Figure \ref{fig:hs_scan_graph}. The process begins at \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/hs_runtime.h#L479}{\texttt{hs\_scan}}. Rose determines three execution scenarios: (1) all patterns are literals, (2) no literals wake up FAs, and (3) literals wake up FAs. The last scenario is the most common. Its flow reaches \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/rose/rose.h#L41}{roseBlockExec}, where one of the string matchers is called through \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/hwlm/hwlm.h#L116}{hwlmExec} together with a \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/rose/rose.h#L49}{roseCallback} function. The \texttt{roseCallback} function eventually calls \href{https://github.com/intel/hyperscan/blob/474d36044c50f0f8bdd51698cdec3329da79de9e/src/rose/program_runtime.h#L53}{roseRunProgram}. This is where the \texttt{left} or \texttt{suffix} FAs are checked, woken up, and executed.
 
 \begin{figure}[ht]
   \centering
@@ -185,9 +195,59 @@ An overview of the execution phase is illustrated in Figure \ref{fig:hs_scan_gra
   \label{fig:hs_scan_graph}
 \end{figure}
 
-\section{The FDR Matcher}
+\section{The FDR string matcher}
 
-There are at least four SIMD-based string matchers in Hyperscan: Noodle is used when there is a single literal, Teddy \cite{qiu2021teddy} or Harry \cite{xu2023harry} when there are 2 to 300, and FDR when there are more than 300. The last three matchers are all prefilter-based. Firstly, they group the literals into a set of \textit{buckets}. Each bucket can be regarded as an indeterminate string (see e.g., \cite{holub2008fast})
+There are at least four SIMD-based string matchers in Hyperscan: Noodle is used when there is a single literal, Teddy \cite{qiu2021teddy} or Harry \cite{xu2023harry} when there are 2 to 300, and FDR when there are more than 300. The last three matchers are prefilter-based: they first filter the text to find candidate matches, and then verify them. FDR is our main candidate for analysis. It extends the classical Shift-Or \cite{baeza1992new} algorithm to match multiple patterns at once. In this section, we review the Shift-Or algorithm and the two phases of FDR called compilation and execution.
+
+\subsection{The Shift-Or algorithm}
+
+Let $\Sigma$ be the alphabet, $T$ be the text, and $P$ be the pattern. Assume a machine word size of $w$ bits, which restricts the pattern length to $|P| \leq w$. Characters in $P$ and $T$ are zero-indexed from left to right. Conversely, register bits are zero-indexed from right to left, starting with the least significant bit (LSB) at position $0$.
+
+During the preprocessing stage, we construct a bitmask for each character in the alphabet, denoted by a function $M: \Sigma \to \{0,1\}^w$. For each character $c \in \Sigma$, the mask is defined as:
+\begin{equation}
+  M[c][i] =
+  \begin{cases}
+    0 & \text{if } i < |P| \text{ and } P[i] = c \\
+    1 & \text{otherwise, for } i \in [0, w-1]
+  \end{cases}
+\end{equation}
+
+The search phase proceeds by initializing a state register $S$ to all 1s ($S \gets \sim\!\! 0$). At each step $i \geq 0$, the register $S$ is updated using the recurrence:
+\begin{equation}
+  S \gets (S \ll 1) \mid M[T[i]].
+\end{equation}
+
+The algorithm operates by shifting the state register left by one position, introducing a $0$ at the LSB. This $0$ propagates to the left as long as the text characters match the pattern characters. If a mismatch occurs, the $0$ is overridden by a $1$ from the character mask, halting the propagation. Consequently, the state register $S$ tracks the longest prefix of $P$ that matches a suffix of $T$ ending at position $i$. If $S[|P|-1] = 0$ at step $i$, a match ends at position $i$ in the text. Correctness is established via induction on the invariant: at step $i$,
+\begin{equation}
+  S[j] = 0 \iff T[i-j \dots i] = P[0 \dots j], \quad \forall j \in [0, |P|-1].
+\end{equation}
+
+\begin{example}
+  Let the pattern be $P = \text{``abac''}$ ($|P| = 4$) and the text be $T = \text{``bbabac''}$. Assume $w \geq 4$; for clarity, we only display the lowest 4 bits.
+  First, we construct the masks $M$:
+  \begin{itemize}
+    \item $M[\text{a}] = 1010_2$ (since $P[0]$ and $P[2]$ are 'a')
+    \item $M[\text{b}] = 1101_2$ (since $P[1]$ is `b')
+    \item $M[\text{c}] = 0111_2$ (since $P[3]$ is `c')
+    \item $M[x] = 1111_2$ for any other character $x \notin P$
+  \end{itemize}
+
+  We initialize $S = 1111_2$. As we read $T$, we update $S \gets (S \ll 1) \mid M[T[i]]$:
+  \begin{itemize}
+    \item $i=0, T[0]=\text{b}$: $S \gets 1110_2 \mid 1101_2 = 1111_2$
+    \item $i=1, T[1]=\text{b}$: $S \gets 1110_2 \mid 1101_2 = 1111_2$
+    \item $i=2, T[2]=\text{a}$: $S \gets 1110_2 \mid 1010_2 = 1110_2$ (Match $P[0]$)
+    \item $i=3, T[3]=\text{b}$: $S \gets 1100_2 \mid 1101_2 = 1101_2$ (Match $P[0 \dots 1]$)
+    \item $i=4, T[4]=\text{a}$: $S \gets 1010_2 \mid 1010_2 = 1010_2$ (Match $P[0 \dots 2]$, and new $P[0]$)
+    \item $i=5, T[5]=\text{c}$: $S \gets 0100_2 \mid 0111_2 = 0111_2$ (Match $P[0 \dots 3]$)
+  \end{itemize}
+  At $i=5$, the bit at index $|P|-1 = 3$ is $0$ ($S[3] = 0$), indicating a full pattern match ending at position 5.
+\end{example}
+
+\subsection{Compilation}
+
+
+First, the literals are grouped into \textit{buckets}. Each bucket can be regarded as an indeterminate string (see e.g., \cite{holub2008fast}).
 
 \begin{definition}
   Let $\Sigma$ be an alphabet. An indeterminate string $\bm{P}$ of length $n$ over $\Sigma$ is a sequence of $n$ non-empty sets of characters from $\Sigma$, i.e.,
@@ -195,7 +255,7 @@ There are at least four SIMD-based string matchers in Hyperscan: Noodle is used 
   where $\emptyset \neq p_i \subseteq \Sigma$ for all $i \in [1, n]$. The subset $\Sigma$ is usually referred to as the \textit{don't care} character. A string $T$ over $\Sigma$ matches the indeterminate string $\bm{P}$ if and only if $|T| = n$ and $T[i] \in \bm{p}_i$ for all $i \in [1, n]$.
 \end{definition}
 
-Let us remark that the set of indeterminate strings over $\Sigma$ is a strict subset of the set of star-free regular expressions over $\Sigma$. For example, the regular expression \texttt{ab|cd} is not an indeterminate string. Let $\{P_1, P_2, \ldots, P_k\}$ be the set of literals in a bucket. Let $p_{ij}$ be the $j$-th character of literal $P_i$. The literals are right-aligned and padded with the don't care character $*$ to form an indeterminate string $\bm{P}$ of length $n = \max\{|P_1|, |P_2|, \ldots, |P_k|\}$, i.e., $\bm{P} = \bm{p}_1  \bm{p}_2  \ldots \bm{p}_{n},$ where
+The set of indeterminate strings over $\Sigma$ is a strict subset of the set of star-free regular expressions over $\Sigma$. For example, the regular expression \texttt{ab|cd} is not an indeterminate string. Let $\{P_1, P_2, \ldots, P_k\}$ be the set of literals in a bucket. Let $p_{ij}$ be the $j$-th character of literal $P_i$. The literals are right-aligned and padded with the don't care character $*$ to form an indeterminate string $\bm{P}$ of length $n = \max\{|P_1|, |P_2|, \ldots, |P_k|\}$, i.e., $\bm{P} = \bm{p}_1  \bm{p}_2  \ldots \bm{p}_{n},$ where
 $$\bm{p}_{n-j}=
   \begin{cases}
     \{p_{i, |P_i|-j} \mid 1 \le i \le k, j \le |P_i|\}, & \text{if $p_{i, |P_i|-j}$ is defined for every $i$}, \\
@@ -203,23 +263,173 @@ $$\bm{p}_{n-j}=
   \end{cases}
 $$
 
-Let $T$ be a text. The string matchers attempt to check if $T$ matches $\bm{P}$, and if so, which literal $P_i$ is matched. The FDR matcher is an SIMD extension of the Shift-Or algorithm (Appendix \ref{sec:shift-or}).
+The implementation of FDR uses the following conventions. Each character has $8$ bits. There are $8$ buckets $B_0, \ldots, B_7$. Each register has $128$ bits. We access the bit indices in a register and the character positions in a string from right to left.
+
+Let $\bm{P}$ be a set of patterns. Let $\tilde{\bm{P}}=(P_1,\ldots, P_m)$ be a permutation of $\bm{P}$ where the patterns are sorted by length, then by lexicographical order. The assignment function is derived from a partition of $\tilde{\bm{P}}$ into 8 buckets, defined by the indices $0=b_0 < b_1 < \ldots < b_6 < b_7 < b_8 = m$, that is, $P_{b_j},\ldots, P_{b_{j+1}-1}$ belong to $B_j$. It aims to minimize the cost function
+\begin{equation}
+  f(b_1,\ldots, b_6) = \sum_{j=0}^{7}\dfrac{(b_{j+1}-b_{j})^\alpha}{|P_{b_{j}}|^\beta}.
+\end{equation}
+
+The implementation chooses $\alpha=1.05$ and $\beta=3$. If one uses the same cost function over the set of all possible assignments, then it turns out that the optimal assignment can be achieved by partitioning $\tilde{\bm{P}}$. That means FDR effectively reduces a combinatorial optimization problem to a dynamic programming problem. We state this fact as follows.
+
+\begin{proposition}
+  Define the cost function $g$ over the set of assignment functions as
+  $$g(\sigma) = \sum_{j\in B}\dfrac{|\sigma^{-1}(j)|^\alpha}{\min\limits_{p \in \sigma^{-1(j)}} |p|^\beta}.$$
+  Then $\min\limits_{b_1,\ldots,b_6}f(b_1,\ldots, b_6) = \min\limits_{\sigma} g(\sigma).$
+\end{proposition}
+
+\begin{proof}
+  The fact that $\min g(\sigma) \le \min f(b_1,\ldots, b_6)$ is straightforward, since any partition of $\tilde{\bm{P}}$ into 8 buckets defines an assignment function.
+
+  We prove the other direction. Let $\sigma$ be an assignment function that minimizes $g$ and its 8 buckets have sizes $n_0, n_1, \dots, n_7$ such that $\sum_{i=0}^7 n_i = m$. Let $L_j = \min_{p \in \sigma^{-1(j)}} |p|$ be the minimum pattern length in bucket $j$. Without loss of generality, we can assume that $L_0 \le L_1 \le \dots \le L_7$. Construct a new, contiguous partition of the sorted array $\tilde{\bm{P}}$ using these exact same sizes $n_0, \dots, n_7$. The boundaries are $b_0 = 0$ and $b_{j+1} = b_j + n_j$. Let $L'_j = \left|p_{b_j}\right|$ be the minimum pattern length in bucket $j$ under the partition. One sees that $L'_j \ge L_j$ for all $j$, and therefore
+  $$\frac{n_j^\alpha}{(L'_j)^\beta} \le \frac{n_j^\alpha}{L_j^\beta}, \forall j\in\{0,\ldots,7\}.$$
+  That yields a new assignment function $\sigma'$ such that $g(\sigma') \le g(\sigma)$. Since $\sigma'$ is a partition of $\tilde{\bm{P}}$, we have $\min f(b_1,\ldots, b_6) \le g(\sigma')$. The proof is completed.
+\end{proof}
+
+After assigning the patterns to buckets, the algorithm builds a mask for each character. The mask for a character $c$ is a bitmask of size $128$ where the left-most $64$ bits are set to $0$. In the right-most $64$ bits, the $(8i+j)$-th bit $(0\le i,j\le 7)$ is set to $0$ if either the character $c$ appears in position $i$ (indexing from the right) of a pattern in bucket $B_j$, or the bucket $B_j$ is not empty and patterns in $B_j$ have length less than or equal to $i$. In this case it is called a \textit{padding bit}. Otherwise, the bit is set to $1$.
+
+For example, consider the buckets $[[ab,bc],[abc],[],[],[],[],[],[]]$. Let $x$ denote any character other than $a,b,c$. The masks are as follows, where the padding bits are in bold.
+\begin{align*}
+  M[a] & = \underbrace{00\ldots00}_{64}\,\, 11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,1111110\textbf{0} \,\, 11111110\,\,11111111  \\
+  M[b] & = \underbrace{00\ldots00}_{64}\,\, 11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,1111111\textbf{0} \,\, 11111100\,\,11111110  \\
+  M[c] & = \underbrace{00\ldots00}_{64}\,\, 11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,1111111\textbf{0} \,\, 11111111\,\,11111101  \\
+  M[x] & = \underbrace{00\ldots00}_{64}\,\, 11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,11111\textbf{00}\,\,1111111\textbf{0} \,\, 11111111\,\,11111111.
+\end{align*}
+
+The last step is to build a hash table for the patterns. Let $h$ be a hash function. Investigating it in the original implementation is left to future work. An array \texttt{arr} is built such that $\texttt{arr}[h(p)]$ gives information of the bucket that the pattern $p$ belongs to.
+
+% In the original implementation, $h$ is defined for each pattern $\bm{p}$ as
+% $$h(\bm{p}) = ((\bm{p} \& \texttt{andmsk}) * \texttt{mult}) >> (64 - \texttt{nBits})$$
+
+\subsection{Execution}
+
+The compiled data structure is used to scan a text. A state mask $R$ is maintained during the process. Each iteration processes $8$ bytes of the text. At iteration $\texttt{ITER}$, the $(8i+j)$-th bit $(0\le i\le 15, 0 \le j \le 7)$ is $0$ if there is currently \textit{no contradiction} to a match of a pattern in bucket $B_j$ ending at position $8\times\texttt{ITER}+i$. If bucket $B_j$ has patterns of length $\ell_j$, then there cannot be a match in this bucket at a position smaller than $\ell_j-1$. Therefore, we initialize the state mask to all $0$'s, except for bits $8i+j$ where $0\le i< \ell_j-1$. After an iteration, we update $R:= R \gg 64$ and continue matching the next $8$ bytes. This ensures that, at each position, the prefix of length at most $8$ is considered. Returning to the example, the initial state mask is
+
+$$R \leftarrow \underbrace{00\ldots00}_{104} \,\, 11111100\,\,11111110\,\,11111111.$$
+
+Let us match against the text $babc$. Since there are only $4$ characters in the text, there is only one iteration. We give details about scanning each character as follows, where we consider the right-most $4$ bytes. The new bit set to $1$ after each character is scanned is underlined.
+
+\begin{tabular*}{\textwidth}{lll}
+  Scan & Update & Result\\
+  \hline
+  $b$ & $ R\gets R | (M[b] \ll 0)$ & $\ldots\,\,11111100\,\,111111\underline{\bm{1}}0\,\,11111110\,\,11111111$\\
+  $a$ & $ R\gets R | (M[a] \ll 1)$ & $\ldots\,\,11111100\,\,11111110\,\,1111111\underline{\bm{1}}\,\,11111111$\\
+  $b$ & $ R\gets R | (M[b] \ll 2)$ & $\ldots\,\,11111100\,\,11111110\,\,11111110\,\,11111111$\\
+  $c$ & $ R\gets R | (M[c] \ll 3)$ & $\ldots\,\,1111110\underline{\bm{1}}\,\,11111110\,\,11111110\,\,11111111$
+\end{tabular*}
+
+Now we report that there is a match at bucket $B_0$ that ends at position $1$, a match at bucket $B_1$ that ends at position $2$ and a match at bucket $B_0$ that ends at position $3$. Since we already know the length of the patterns in each bucket, we can retrieve the beginning position of those potential matches and verify them by exact string comparison. In this case, those three potential matches are indeed matches. We give the pseudocode as in Algorithm~\ref{alg:compilation} and Algorithm~\ref{alg:execution}.
+
+\begin{algorithm}[H]
+  \caption{Compilation phase: building masks}
+  \label{alg:compilation}
+  \begin{algorithmic}[1]
+    \State Assign each pattern to a bucket $B_1,\ldots,B_b$.
+
+    \State $M\gets$  a dictionary mapping each character to a mask.
+
+    \For{$c=00000000$ to $11111111$}
+    \State $M[c] \gets \underbrace{00\ldots00}_{64}\underbrace{11\ldots11}_{64}$ \Comment{Initialize.}
+    \For{$j=0$ to $7$ and $B_j$ is not empty}
+    \State $\ell_j\gets$ length of the longest pattern in bucket $B_j$.
+    \For{$i=\ell_j$ to $7$}
+    \State $M[c][8i+j] \gets 0$ \Comment{Set padding bits to $0$.}
+    \EndFor
+    \EndFor
+    \EndFor
+
+    \For{$j=0$ to $7$}
+    \For{each pattern $x$ in bucket $B_j$}
+    \For{$i=0$ to $\text{length}(x)-1$}
+    \State $M[x[i]][8i+j] \gets 0$
+    \EndFor
+    \EndFor
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \caption{Execution phase: scanning the text}
+  \label{alg:execution}
+  \begin{algorithmic}[1]
+    \State $R\gets$ a bitmask of size $128$ where the $(8i+j)$-th bit is $0$ if $i\ge \ell_j-1$ and $1$ otherwise.
+    \State $T\gets$ the text to be scanned.
+
+    \For{$\texttt{ITER}=0$ to $\lfloor\frac{\text{length}(T)}{8}\rfloor-1$}
+    \State $V\gets T[8\times\texttt{ITER}\ldots 8\times\texttt{ITER}+7]$
+    \For{$j=0$ to $7$}
+    \State $R\gets R | (M[V[j]] \ll j)$
+    \EndFor
+    \State Report potential matches at positions where the corresponding bits in $R$ are $0$. Verify those potential matches by hashing then by exact string comparison.
+    \State $R\gets R \gg 64$
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+If the text contains $ac$, a match at position $1$ for bucket $B_0$ is still reported. \textit{Super-characters} are introduced. Let $s$ be the number of bits in a super-character. For example, instead of assigning $M[a]$ as in the first step of the compilation phase, we build a mask for the super-character
+$$(b[0\ldots s-8)\ll 8) \,|\, a.$$
+
+If a character is at the end of a pattern, for example $b$ in the pattern $ab$, then we assign the mask for
+$$0\ll 8 \,|\, b.$$
+
+However, the algorithm may then \textit{fail} to report the match of $ab$ in bucket $B_0$ ending at position $2$ for the text $babc$. The reason is that when scanning the second $b$, it queries and ORs the mask for the super-character $(b[0\ldots s-8)\ll 8) \,|\, c$ instead of the mask for $0\ll 8 \,|\, b$. The idea is to set the bits that may introduce a wrong contradiction to $0$ in the mask for the super-character beforehand. More precisely, if a character $c$ appears at position $0$ of a pattern in bucket $B_j$, then we set the bit at position $j$ to $0$ in the mask for the super-character
+$$(x[0\ldots s-8)\ll 8) \,|\, c$$
+for \textit{every} character $x$. This can be done more efficiently, as in fact there are only $2^{s-8}$ such super-characters. The corrected compilation pseudocode is given in Algorithm~\ref{alg:compilation-super}. The changes or additions are highlighted in \textcolor{gustave}{blue}.
+
+\begin{algorithm}[H]
+  \caption{Compilation phase: building masks with super-characters}
+  \label{alg:compilation-super}
+  \begin{algorithmic}[1]
+    \State Assign each pattern to a bucket $B_1,\ldots,B_b$.
+
+    \State $M\gets$  a dictionary mapping each character to a mask.
+
+    \State \textcolor{gustave}{$s\gets$ the number of bits in a super-character.}
+
+    \For{\textcolor{gustave}{$c=\underbrace{00\ldots00}_{s}$ to $\underbrace{11\ldots11}_{s}$}}
+    \State $M[c] \gets \underbrace{00\ldots00}_{64}\underbrace{11\ldots11}_{64}$ \Comment{Initialize.}
+    \For{$j=0$ to $7$ and $B_j$ is not empty}
+    \State $\ell_j\gets$ length of the longest pattern in bucket $B_j$.
+    \For{$i=\ell_j$ to $7$}
+    \State $M[c][8i+j] \gets 0$ \Comment{Set padding bits to $0$.}
+    \EndFor
+    \EndFor
+    \EndFor
+
+    \For{$j=0$ to $7$}
+    \For{each pattern $x$ in bucket $B_j$}
+    \State \textcolor{gustave}{$f\gets x[0]$} \Comment{\textcolor{gustave}{Handle the end character.}}
+    \For {\textcolor{gustave}{$y\gets \underbrace{0\ldots0}_{s-8}$} to \textcolor{gustave}{$\underbrace{1\ldots1}_{s-8}$}}
+    \State \textcolor{gustave}{$M[(y\ll 8) | f][8j] \gets 0$}
+    \EndFor
+    \For{$i=\textcolor{gustave}{1}$ to $\text{length}(x)-1$}
+    \State $M[x[i]][8i+j] \gets 0$
+    \EndFor
+    \EndFor
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+A potential piece of text is hashed by the function $h$ in the compilation phase and checked against the corresponding bucket. If there is a match, the beginning position of the pattern is retrieved and verified by exact string comparison.
+
+Another parameter is the \textit{stride}. For example, if the stride is $2$, then we traverse $j$ at $0$, $2$, $4$ and $6$. This is because at each step of $j$, we have to query the mask dictionary, which is not in constant time. The trade-off is that there are more positives to verify.
+
+The simplified FDR model above was also used as an experimental object. In particular, we implemented variants that isolate the effects of bucket assignment, super-characters, and stride choices on the probability of reporting positives. These experiments suggest that a complete analysis should not only count SIMD operations, but also account for the verification cost created by false positives.
 
 \pablo{Before the related problems, it would be better (I think) to introduce the Shift-Or algorithm here. You also had experiments, right ? You can mention what you did related to this.}
 
-\section{Related Problems}
-
+\section{Related problems}
 
 \subsection{Optimizing regular expression decomposition}
 
-Both representations in Figure \ref{fig:graph_comparison} are likely suboptimal for theoretical analysis. Firstly, the sub-FA may appear several times, even though it only appear once in the regular expression, for example in the case of \texttt{(abc|def)[0-9]+xyz}. Secondly, although we had to mark \texttt{xyz} as a terminal vertex in Figure \ref{fig:graph_comparison}, this is not strictly accurate: the matching process terminates at the end of the sub-FA, not at the end of \texttt{xyz}. If there are remaining FAs or literals to the right, it is the sub-FA for \texttt{[0-9]+} that will determine the next matching position. Therefore, we propose a more convenient representation as follows. Each vertex is either a literal or a sub-FA. There are three types of directed edges.
+Both representations in Figure \ref{fig:graph_comparison} are likely suboptimal for theoretical analysis. First, the sub-FA may appear several times, even though it appears only once in the regular expression, for example in the case of \texttt{(abc|def)[0-9]+xyz}. Second, although we had to mark \texttt{xyz} as a terminal vertex in Figure \ref{fig:graph_comparison}, this is not strictly accurate: the matching process terminates at the end of the sub-FA, not at the end of \texttt{xyz}. If there are remaining FAs or literals to the right, it is the sub-FA for \texttt{[0-9]+} that will determine the next matching position. Therefore, we propose a more convenient representation as follows. Each vertex is either a literal or a sub-FA. There are three types of directed edges.
 \begin{itemize}
-  \item Edges that uses the \textit{end} positions of the matches of the source vertex to determine the \textit{start} positions of the matches of the target vertex. They connect two literals or a literal and a sub-FA. We call this type of edge \texttt{setStart}.
-  \item Edges that uses the \textit{start} positions of the matches of the source vertex to determine the \textit{end} positions of the matches of the target vertex. They connect a literal and a sub-FA. We call this type of edge \texttt{setEnd}.
-  \item Edges that acts as a pure trigger, without any position information. They connect two sub-FAs. We call this type of edge \texttt{trigger}.
+  \item Edges that use the \textit{end} positions of the matches of the source vertex to determine the \textit{start} positions of the matches of the target vertex. They connect two literals or a literal and a sub-FA. We call this type of edge \texttt{setStart}.
+  \item Edges that use the \textit{start} positions of the matches of the source vertex to determine the \textit{end} positions of the matches of the target vertex. They connect a literal and a sub-FA. We call this type of edge \texttt{setEnd}.
+  \item Edges that act as pure triggers, without any position information. They connect two sub-FAs. We call this type of edge \texttt{trigger}.
 \end{itemize}
 
-Consider another example of \texttt{abc[0-9]+xyz(de)*}. In its dependency graph in the new representation is as in Figure \ref{fig:new_representation}.
+Consider another example of \texttt{abc[0-9]+xyz(de)*}. Its dependency graph in the new representation is shown in Figure \ref{fig:new_representation}.
 
 \begin{figure}[htbp]
   \centering
@@ -244,28 +454,35 @@ Consider another example of \texttt{abc[0-9]+xyz(de)*}. In its dependency graph 
 
     % Paths/Edges
     \path[->, thick] (abc) edge node[above, edge_label] {setStart} (digits);
-    \path[->, thick] (abc) edge node[above, edge_label] {setStart} (xyz);
     \path[->, thick] (xyz) edge node[above, edge_label] {setEnd} (digits);
     \path[->, thick] (xyz) edge node[above, edge_label] {setStart} (de);
     \path[->, thick] (digits) edge node[above, edge_label] {} (de);
 
   \end{tikzpicture}
-  \caption{Proposed sequential dependency graph representation for \texttt{abc[0-9]+xyz}. \cyril{I'm a bit confuse by the edge $abc\rightarrow xyz$}}
+  \caption{Proposed sequential dependency graph representation for \texttt{abc[0-9]+xyz(de)*}.}
+  \cyril{I'm a bit confuse by the edge $abc\rightarrow xyz$}
+  \minh{You're right. It is the literals that determine the start positions of the sub-FAs, not between themselves.}
   \label{fig:new_representation}
 \end{figure}
 
 \subsection{Analysis of the FDR string matcher}
 
-\cyril{Define the BST-like distribution here instead of in the appendices, and introduce $u$ and $v$, with possibly some discussion on the ``real life'' values.}
+A complete analysis of the FDR string matcher would take all of its ingredients into account: the assignment algorithm, the super-character size, the stride, the hash function, and the verification cost. We leave this for future work.
+
 
 \subsection{Statistics of regular expressions}
 
-Suppose that the regex trees are generated according to a BST-like distribution. The average length of the longest literals of an $n$-node tree satisfies the recurrence \cyril{explain why this equation holds, at least informally}
+\cyril{Define the BST-like distribution here instead of in the appendices, and introduce $u$ and $v$, with possibly some discussion on the ``real life'' values.}
+
+One tractable part of analyzing Hyperscan is to study statistics of regular expressions under a distribution. We use the BST-like distribution from Definition \ref{def:bst-like-distribution}. In this model, $u$ is the probability that an internal node is a concatenation, $v$ is the probability that it is an alternation, and $1-u-v$ is the probability that it is a Kleene star. These parameters can be fitted to concrete pattern sets. For instance, maximum-likelihood fitting on the Snort rule set gives $u \approx 0.9$ and $v \approx 0.09$, as discussed in the previous chapter.
+
+Since Hyperscan extracts and matches literals before executing the sub-FAs, it is worth considering the average length of the longest literal that Hyperscan attempts to match. Let this quantity be denoted by a random variable $Y_n$ for a random regex tree of size $n$. If the root is a concatenation, then literals from the left and right subtrees can be concatenated, so the longest literal is the sum of the two subtree contributions. If the root is an alternation, then a string follows one branch or the other, so the longest literal is the maximum of the two subtree contributions. If the root is a Kleene star, the language contains the empty string; in the model used here, Hyperscan does not extract a literal through that root, and the contribution is $0$.
+
+\cyril{explain why this equation holds, at least informally}
+
 \begin{equation}
   \label{eq:longest-literal-recurrence}
   Y_{n+2} \stackrel{d}{=} I\left(Y_{U_n}^{(1)} + Y_{n+1-U_n}^{(2)}\right) + J\max\left(Y_{U_n}^{(1)}, Y_{n+1-U_n}^{(2)}\right), n\ge 1, \quad Y_1=1, Y_2=0.
 \end{equation}
 
-Superscripts denote mutually independent copies. The variable $U_n$ is uniformly distributed on $\{1, \ldots, n\}$. The variables $I$ and $J$ are Bernoulli distributed with expectations $u$ and $v$ respectively, such that $I + J \le 1$. We reuse the same variables $Y_{U_n}^{(1)}, Y_{n+1-U_n}^{(2)}$ and $U_n$ across both terms, since the branches are not taken at the same time. The variables $I$ and $J$ are also reused, since at every new iteration, we sample a new subtree independently.
-
-Details analysis for the asymptotic behavior of $\EE[Y_n]$ is given in the next chapter.
+The recurrence is obtained by conditioning on the root operator. For a tree of size $n+2$, the root consumes one unit of size and the two subtrees have total size $n+1$. The split is chosen uniformly, hence the random variable $U_n$ is uniformly distributed on $\{1, \ldots, n\}$ and the two subtree sizes are $U_n$ and $n+1-U_n$. Superscripts denote mutually independent copies. The variables $I$ and $J$ indicate whether the root is a concatenation or an alternation; they satisfy $\EE[I]=u$, $\EE[J]=v$, and $I+J\le1$. When both indicators are zero, the root is a Kleene star and the contribution is $0$. The base cases are $Y_1=1$ for a single letter and $Y_2=0$ for a single Kleene-star root. A detailed analysis of the asymptotic behavior of $\EE[Y_n]$ is given in the next chapter.

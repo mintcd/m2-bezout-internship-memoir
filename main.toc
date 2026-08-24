@@ -1,25 +1,37 @@
 \contentsline {chapter}{List of Figures}{5}{chapter*.4}%
 \contentsline {chapter}{\numberline {1}Introduction}{6}{chapter.1}%
-\contentsline {chapter}{\numberline {2}An Overview of the Hyperscan Engine}{7}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Compilation}{7}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Execution}{9}{section.2.2}%
-\contentsline {section}{\numberline {2.3}The FDR Matcher}{9}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Related Problems}{10}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}Optimizing regular expression decomposition}{10}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Analysis of the FDR string matcher}{11}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Statistics of regular expressions}{11}{subsection.2.4.3}%
-\contentsline {chapter}{\numberline {3}The Length of Longest Literals}{12}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Lower and upper bounds}{12}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Asymptotics of the lower bound recurrence}{13}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Asymptotics of the original recurrence}{22}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Proof strategy}{22}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Partial proof of uniqueness of the fixed point}{24}{subsection.3.3.2}%
-\contentsline {chapter}{\numberline {A}Appendix}{26}{appendix.A}%
-\contentsline {section}{\numberline {A.1}The Shift-Or algorithm}{26}{section.A.1}%
-\contentsline {section}{\numberline {A.2}BST-like distributions of regular expression trees}{26}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Basics of Monte-Carlo simulation}{27}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Remaining proofs}{27}{section.A.4}%
-\contentsline {subsection}{\numberline {A.4.1}Lemma \ref {lem:limiting-equation}}{27}{subsection.A.4.1}%
-\contentsline {subsection}{\numberline {A.4.2}Proposition \ref {prop:f}}{27}{subsection.A.4.2}%
-\contentsline {subsection}{\numberline {A.4.3}Proposition \ref {prop:uniform-bounded-second-moment}}{27}{subsection.A.4.3}%
-\contentsline {chapter}{\numberline {B}Bibliography}{28}{appendix.B}%
+\contentsline {chapter}{\numberline {2}Concepts and Techniques}{7}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Regular expressions}{7}{section.2.1}%
+\contentsline {section}{\numberline {2.2}SIMD parallelism}{9}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Analytic combinatorics}{9}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Monte Carlo simulation}{10}{section.2.4}%
+\contentsline {chapter}{\numberline {3}The Hyperscan Engine and Related Problems}{12}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Overview of Hyperscan}{12}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Compilation}{12}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Execution}{14}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}The FDR string matcher}{15}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}The Shift-Or algorithm}{15}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Compilation}{16}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Execution}{17}{subsection.3.2.3}%
+\contentsline {section}{\numberline {3.3}Related problems}{20}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Optimizing regular expression decomposition}{20}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Analysis of the FDR string matcher}{20}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Statistics of regular expressions}{20}{subsection.3.3.3}%
+\contentsline {chapter}{\numberline {4}The Length of Longest Literals}{22}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Lower and upper bounds}{22}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Asymptotics of the lower bound recurrence}{23}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Asymptotics of the stochastic recurrence}{34}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Proof strategy}{34}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Partial proof of uniqueness of the fixed point}{37}{subsection.4.3.2}%
+\contentsline {chapter}{\numberline {5}Conclusion}{39}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Appendix}{41}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Supplementary results}{41}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}Asymptotics of recurrences that include a sum of history}{41}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Spaces of probability measures}{42}{subsection.A.1.2}%
+\contentsline {section}{\numberline {A.2}Remaining proofs}{43}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}Lemma \ref {lem:limiting-equation}}{43}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}Proposition \ref {prop:f}}{45}{subsection.A.2.2}%
+\contentsline {subsection}{\numberline {A.2.3}Proposition \ref {prop:uniform-bounded-second-moment}}{45}{subsection.A.2.3}%
+\contentsline {subsection}{\numberline {A.2.4}Proposition \ref {prop:nonempty-compact-convex}}{46}{subsection.A.2.4}%
+\contentsline {subsection}{\numberline {A.2.5}Proposition \ref {prop:phi-continuity}}{46}{subsection.A.2.5}%
+\contentsline {chapter}{\numberline {B}Bibliography}{49}{appendix.B}%
