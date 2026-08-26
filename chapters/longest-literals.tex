@@ -10,7 +10,6 @@ We first bound $(y_n)$ between deterministic recurrences. The upper bound replac
 \section{Lower and upper bounds}
 
 Consider the recurrence \eqref{eq:longest-literal-recurrence}. Denote $y_n := \EE[Y_n]$ for $n \ge 1$. Taking expectations in \eqref{eq:longest-literal-recurrence} gives, for $n \ge 1$,
-
 \begin{equation}
   \label{eq:expected-longest-literal-recurrence}
   \begin{aligned}
@@ -253,7 +252,7 @@ The proof of Theorem \ref{thm:theta-asymptotics} uses a fine-grained induction. 
   In the proof of the lower bound, we use the fact that $(n+L)^{\alpha+1}$ dominates $n(n+L+2)^{\alpha+1}$ when $L$ is large enough. Similarly, $(n-L)^{\alpha+1} \ll n(n-L+2)^{\alpha+1}$ for large $L$. However, applying the same idea to the upper bound would start the induction only after some $n > L$. We avoid this by choosing $L=1$ and saving a fixed budget $2u$ in the first term, which also gives a useful algebraic simplification.
 \end{remark}
 
-We now prove the exact asymptotics stated in Theorem \ref{thm:exact-asymptotics}. A natural goal is to remove the maximum operator. If $z_1=z_2=1$, then the sequence would be increasing from the beginning, and induction would allow us to eliminate the maximum operator. However, the initial conditions $z_1=1$ and $z_2=0$ make the sequence $(z_n)$ fluctuate during the first iterations, and the index at which it becomes increasing depends on the parameters $u$ and $v$. An extreme case of a long fluctuation period occurs when $u\to1/2+$ and $v\to0+$. We illustrate this phenomenon and compare the two cases in Figure~\ref{fig:difference-beginning}.
+We now prove the exact asymptotics stated in Theorem \ref{thm:exact-asymptotics}. A natural goal is to remove the maximum operator. If $z_1=z_2=1$, then the sequence would be increasing from the beginning, and induction would allow us to eliminate the maximum operator. However, the initial conditions $z_1=1$ and $z_2=0$ make the sequence $(z_n)$ fluctuate during the first iterations, and the index at which it becomes increasing depends on the parameters $u$ and $v$. An extreme case of a long fluctuation period occurs when $u\to1/2+$ and $v\to0+$. We illustrate this phenomenon and compare the two cases in Figure~\ref{fig:difference-beginning}. The figure compares the consecutive differences of the same recurrence under two close initializations, $z_1=z_2=1$ and $z_1=1,z_2=0$, in the difficult regime $u=0.5000001$ and $v=0.000001$. The second initialization can create a long initial fluctuation, which explains why monotonicity cannot simply be assumed from the beginning.
 
 \begin{figure}
   \begin{subfigure}[c]{0.45\linewidth}
@@ -272,7 +271,7 @@ We now prove the exact asymptotics stated in Theorem \ref{thm:exact-asymptotics}
 
 \pablo{Give experimental examples.}
 
-Figure~\ref{fig:difference-beginning} compares the consecutive differences of the same recurrence under two close initializations, $z_1=z_2=1$ and $z_1=1,z_2=0$, in the difficult regime $u=0.5000001$ and $v=0.000001$. The second initialization can create a long initial fluctuation, which explains why monotonicity cannot simply be assumed from the beginning.
+
 
 Eventual monotonicity is sufficient to remove the maximum operator. Assume that there exists $N_1$ such that $z_{n+1} \ge z_n$ for all $n \ge N_1$. Since $(z_n)$ is unbounded, there exists $N_2 \ge N_1$ such that for all $n \ge N_2$, we have both $z_{n+1} \ge \max\limits_{1\le i \le N_1} z_i$ and $z_{n+1} \ge z_n$. That is,
 $$\forall n \ge N_2, \quad z_{n+1} \ge \max_{1 \le i \le n} z_i.$$

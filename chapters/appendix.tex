@@ -53,6 +53,12 @@
 \subsection{Spaces of probability measures}
 \label{subsec:supp-locally-convex-spaces}
 
+\begin{definition}[Weak convergence of measures]
+  \label{def:weak-convergence}
+  Let $(M,d)$ be a metric space and let $\M$ be the Borel $\sigma$-algebra on $M$. Let a probability distribution be defined on $(M, \M)$, and let $C_b(M)$ be the set of real-valued, bounded, continuous functions on $M$. A sequence of measures $(\mu_n)$ converges weakly to a measures $\mu$ if, for all $f\in C_b(M)$, we have
+  $$\int f \, d\mu_n \to \int f \, d\mu.$$
+\end{definition}
+
 \begin{definition}[Tightness]
   \label{def:tight}
   A sequence of probability measures $(\mu_n)$ on $\RR$ is tight if for every $\varepsilon > 0$, there exists $M > 0$ such that $\sup_n \mu_n(\{x: |x| > M\}) < \varepsilon$.

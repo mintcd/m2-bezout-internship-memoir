@@ -6,7 +6,7 @@ This chapter introduces the concepts and techniques used in the report. We first
 
 % Regular expressions, finite automata, Glushkov construction, BST distribution.
 
-A \textit{regular expression} is a string that describes a set of strings according to certain syntax rules. Formally, given a finite alphabet $\Sigma$, the set of regular expressions over $\Sigma$ is defined inductively. The base cases consist of the empty set $\emptyset$, the empty word $\epsilon$, and literal characters $a \in \Sigma$. More complex expressions are constructed using three fundamental operators: alternation ($\mid$), concatenation (implicit or $\cdot$), and the Kleene star ($*$). Semantically, a regular expression $E$ maps to a formal language $\mathcal{L}(E) \subseteq \Sigma^*$ via the following structural rules:
+A \textit{regular expression} is a string that describes a set of words according to certain syntax rules. We start with a finite alphabet $\Sigma$. Let $\Sigma^*=\cup_{n \ge 0} \Sigma^n$ be the set of all words over $\Sigma$. By convention, $\Sigma^0$ is the empty word $\epsilon$. The set of regular expressions over $\Sigma$ is defined inductively. The base cases consist of the empty set $\emptyset$, the empty word $\epsilon$, and literal characters $a \in \Sigma$. More complex expressions are constructed using three fundamental operators: alternation ($\mid$), concatenation (implicit or $\cdot$), and the Kleene star ($*$). Semantically, a regular expression $E$ maps to a formal language $\mathcal{L}(E) \subseteq \Sigma^*$ via the following structural rules:
 \begin{align*}
    & \mathcal{L}(\emptyset)     = \emptyset, \quad \mathcal{L}(\epsilon) = \{\epsilon\}, \quad \mathcal{L}(a) = \{a\}, \\
    & \mathcal{L}(E_1 \mid E_2)     = \mathcal{L}(E_1) \cup \mathcal{L}(E_2),                                           \\
@@ -24,7 +24,7 @@ A fundamental result in formal language theory is that the expressive power of r
     \item $Q$ is a finite set of states,
     \item $q_0 \in Q$ is the start state,
     \item $F \subseteq Q$ is the set of terminal states, and
-    \item $\delta: Q \times \Sigma \to 2^Q$ is the transition function.
+    \item $\delta: Q \times (\Sigma\cup \{\epsilon\}) \to 2^Q$ is the transition function.
   \end{itemize}
 
   The automaton is a deterministic finite automaton (DFA) if $\delta(q,a)$ is a singleton for every $q\in Q$ and $a\in\Sigma$.
@@ -119,55 +119,46 @@ The field of analytic combinatorics \cite{flajolet2009analytic} applies tools fr
 \section{Monte Carlo simulation}
 \label{subsec:monte-carlo-simulation}
 
-The Monte Carlo method uses a population of random samples to estimate a distribution. This approach is required later to test conjectures related to recurrence \eqref{eq:longest-literal-recurrence} in the longest literal problem, as computing the exact PMFs and CDFs is computationally intractable. The theoretical setup is as follows. Given a distribution $\mu$ and a number of particles $n$, we sample
-$$X_1, X_2, \ldots, X_n \overset{\text{iid}}{\sim} \mu.$$
-The empirical distribution $\mu_n$ is defined as
-$$\mu_n = \frac{1}{n} \sum_{i=1}^n \delta_{X_i}.$$
+The Monte Carlo method uses a population of random samples to estimate a distribution. This approach is required later to test conjectures related to recurrence \eqref{eq:longest-literal-recurrence} in the longest literal problem, as computing the exact PMFs and CDFs is computationally intractable. It is based on Varadarajan's Theorem \cite{varadarajan1958weak}. We refer to Definition \ref{def:weak-convergence} for the notion of weak convergence of measures.
 
-\begin{definition}[Weak convergence of distributions]
-  Let $(M,d)$ be a metric space and let $\M$ be the Borel $\sigma$-algebra on $M$. Let a probability distribution be defined on $(M, \M)$, and let $C_b(M)$ be the set of real-valued, bounded, continuous functions on $M$. A sequence of distributions $(\mu_n)$ converges weakly to a distribution $\mu$ if, for all $f\in C_b(M)$, we have
-  $$\int f \, d\mu_n \to \int f \, d\mu.$$
-\end{definition}
-
-\begin{theorem}[Varadarajan's Theorem \cite{varadarajan1958weak}]
-  The empirical distribution sequence $\mu_n$ converges weakly to $\mu$ almost surely.
+\begin{theorem}[Varadarajan]
+  Let $\mu$ be a probability distribution on a separable metric space $(M,d)$, and let $X_1, X_2, \ldots, X_n \stackrel{\text{iid}}{\sim} \mu$. Define the empirical distribution $\mu_n$ as
+  $$\mu_n = \frac{1}{n} \sum_{i=1}^n \delta_{X_i}.$$
+  Then $(\mu_n)\xrightarrow{w} \mu, a.s.$
 \end{theorem}
 
 By the Continuous Mapping Theorem, continuous operations on empirical distributions preserve weak convergence.
 
 \begin{proposition}[Continuous Mapping]
   Let $(X_i, Y_i)_{i=1}^n$ be independent and identically distributed samples from a joint distribution $\mu$ on $M \times M$, with empirical measure $\mu_n = \frac{1}{n} \sum_{i=1}^n \delta_{(X_i, Y_i)}$. Let $f: M \times M \to M$ be a continuous function. Then,
-  $$\frac{1}{n}\sum_{i=1}^n \delta_{f(X_i, Y_i)} \stackrel{w}{\longrightarrow} f_{\#}\mu$$
-  almost surely.
+  $$\frac{1}{n}\sum_{i=1}^n \delta_{f(X_i, Y_i)} \stackrel{w}{\longrightarrow} f_{\#}\mu, \quad a.s.$$
 \end{proposition}
 
 We rely on the following special cases for real-valued random variables:
 
 \begin{enumerate}
   \item When $f(x,y) = x + y$, we have
-        $\dfrac{1}{n}\sum\limits_{i=1}^n \delta_{X_i + Y_i} \stackrel{w}{\longrightarrow} \mathcal{L}(X+Y)$
-        almost surely.
+        $\dfrac{1}{n}\sum\limits_{i=1}^n \delta_{X_i + Y_i} \stackrel{w}{\longrightarrow} \mathcal{L}(X+Y), a.s.$
+
   \item When $f(x,y) = \max(x,y)$, we have
-        $\dfrac{1}{n}\sum\limits_{i=1}^n \delta_{\max(X_i, Y_i)} \stackrel{w}{\longrightarrow} \mathcal{L}(\max(X,Y))$
-        almost surely.
+        $\dfrac{1}{n}\sum\limits_{i=1}^n \delta_{\max(X_i, Y_i)} \stackrel{w}{\longrightarrow} \mathcal{L}(\max(X,Y)), a.s.$
+
   \item When $f(x,y) = xy$, we have
-        $\dfrac{1}{n}\sum\limits_{i=1}^n \delta_{X_i Y_i} \stackrel{w}{\longrightarrow} \mathcal{L}(XY)$
-        almost surely.
+        $\dfrac{1}{n}\sum\limits_{i=1}^n \delta_{X_i Y_i} \stackrel{w}{\longrightarrow} \mathcal{L}(XY), a.s.$
+
 \end{enumerate}
 
 \begin{proposition}[Wasserstein convergence of empirical measures]
   Let $(\mu_n)$ be a sequence of empirical measures such that $\mu_n \stackrel{w}{\longrightarrow} \mu$ almost surely, and assume the $p$-th moment of $\mu$ is finite. Then,
-  $$W_p(\mu_n, \mu) \to 0$$
-  almost surely.
+  $$W_p(\mu_n, \mu) \to 0, \quad a.s.$$
 \end{proposition}
 
 Using the triangle inequality, we can establish the following convergence result for two sequences.
 
 \begin{proposition}[Convergence of Wasserstein distance]
   \label{prop:Wasserstein_convergence}
-  Let $\mu_n \stackrel{w}{\longrightarrow} \mu$ almost surely and $\nu_n \stackrel{w}{\longrightarrow} \nu$ almost surely. Then,
-  $$W_p(\mu_n, \nu_n) \to W_p(\mu, \nu)$$
-  almost surely.
+  Let $\mu_n \stackrel{w}{\longrightarrow} \mu$ a.s., and $\nu_n \stackrel{w}{\longrightarrow} \nu$ a.s. Then,
+  $$W_p(\mu_n, \nu_n) \to W_p(\mu, \nu), \quad a.s.$$
 \end{proposition}
 
 For one-dimensional distributions, Proposition \ref{prop:Wasserstein_convergence} allows us to compute the empirical Wasserstein distance in $O(n\log n)$ time by sorting the samples:

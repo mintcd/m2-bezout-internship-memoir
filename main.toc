@@ -22,16 +22,16 @@
 \contentsline {section}{\numberline {4.2}Asymptotics of the lower bound recurrence}{23}{section.4.2}%
 \contentsline {section}{\numberline {4.3}Asymptotics of the stochastic recurrence}{34}{section.4.3}%
 \contentsline {subsection}{\numberline {4.3.1}Proof strategy}{34}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}A fixed-point approach: existence}{37}{subsection.4.3.2}%
-\contentsline {chapter}{\numberline {5}Conclusion}{39}{chapter.5}%
-\contentsline {chapter}{\numberline {A}Appendix}{41}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Supplementary results}{41}{section.A.1}%
-\contentsline {subsection}{\numberline {A.1.1}Asymptotics of recurrences that include a sum of history}{41}{subsection.A.1.1}%
-\contentsline {subsection}{\numberline {A.1.2}Spaces of probability measures}{42}{subsection.A.1.2}%
-\contentsline {section}{\numberline {A.2}Remaining proofs}{43}{section.A.2}%
-\contentsline {subsection}{\numberline {A.2.1}Lemma \ref {lem:limiting-equation}}{43}{subsection.A.2.1}%
-\contentsline {subsection}{\numberline {A.2.2}Proposition \ref {prop:f}}{45}{subsection.A.2.2}%
-\contentsline {subsection}{\numberline {A.2.3}Proposition \ref {prop:uniform-bounded-second-moment}}{45}{subsection.A.2.3}%
-\contentsline {subsection}{\numberline {A.2.4}Proposition \ref {prop:nonempty-compact-convex}}{46}{subsection.A.2.4}%
-\contentsline {subsection}{\numberline {A.2.5}Proposition \ref {prop:phi-continuity}}{46}{subsection.A.2.5}%
-\contentsline {chapter}{\numberline {B}Bibliography}{49}{appendix.B}%
+\contentsline {subsection}{\numberline {4.3.2}A fixed-point approach: existence}{36}{subsection.4.3.2}%
+\contentsline {chapter}{\numberline {5}Conclusion}{38}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Appendix}{40}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Supplementary results}{40}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}Asymptotics of recurrences that include a sum of history}{40}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Spaces of probability measures}{41}{subsection.A.1.2}%
+\contentsline {section}{\numberline {A.2}Remaining proofs}{42}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}Lemma \ref {lem:limiting-equation}}{42}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}Proposition \ref {prop:f}}{44}{subsection.A.2.2}%
+\contentsline {subsection}{\numberline {A.2.3}Proposition \ref {prop:uniform-bounded-second-moment}}{44}{subsection.A.2.3}%
+\contentsline {subsection}{\numberline {A.2.4}Proposition \ref {prop:nonempty-compact-convex}}{45}{subsection.A.2.4}%
+\contentsline {subsection}{\numberline {A.2.5}Proposition \ref {prop:phi-continuity}}{45}{subsection.A.2.5}%
+\contentsline {chapter}{\numberline {B}Bibliography}{48}{appendix.B}%
